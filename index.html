@@ -1014,14 +1014,19 @@
 <!-- 添加/编辑表单 -->
 <div class="overlay" id="formOverlay">
   <div class="form-modal">
-    <h2 id="formTitle">添加搭配码</h2>
-    <input type="text" id="codeInput" placeholder="搭配码（必填）">
-    <textarea id="noteInput" placeholder="备注（可选）"></textarea>
+           <h2 id="formTitle">添加搭配码</h2>
+
+    <label class="tag-picker-label">搭配码（必填）</label>
+    <input type="text" id="codeInput" placeholder="输入搭配码...">
+
+    <label class="tag-picker-label">备注（可选）</label>
+    <textarea id="noteInput" placeholder="输入备注..."></textarea>
 
     <div class="tag-picker">
       <label class="tag-picker-label">🏷️ 标签（可选）</label>
       <div class="tag-selected" id="tagSelected"></div>
       <input type="text" id="tagInput" class="tag-input"
+             placeholder="输入标签关键词，或直接打字回车新建..."
              oninput="onTagInput()" onkeydown="onTagKeydown(event)">
       <div class="tag-suggest-wrap" id="tagSuggestWrap" style="display:none;">
         <div class="tag-suggest" id="tagSuggest"></div>
@@ -1029,6 +1034,7 @@
           展开全部
         </button>
       </div>
+    </div>
     </div>
 
     <div class="imgs-upload" id="imgsUpload">
