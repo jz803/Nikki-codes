@@ -1383,11 +1383,26 @@ function getFilteredSorted() {
 
   // 搜索
   if (keyword) {
-    data = data.filter(item =>
-      item.code.toLowerCase().includes(keyword) ||
-      (item.note || '').toLowerCase().includes(keyword) ||
-      (item.tags || []).some(t => t.toLowerCase().includes(keyword))
-    );
+    const words = keyword.split(/\s+/).filter(Boolean);
+    const scoreOf = item => {
+      const code = item.code.toLowerCase();
+      const note = (item.note || '').toLowerCase();
+      const tags = (item.tags || []).map(t => t.toLowerCase());
+
+      let score = 0;
+      for (const w of words) {
+        if (code.includes(w) || note.includes(w) || tags.some(t => t.includes(w))) {
+          score++;
+        }
+      }
+      return score;
+    };
+
+    data = data
+      .map(item => ({ item, score: scoreOf(item) }))
+      .filter(x => x.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(x => x.item);
   }
 
   // 收藏筛选
