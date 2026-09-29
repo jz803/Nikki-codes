@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>搭配码</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --main: #F6BCC0;
+    --main-deep: #e79aa0;
+    --main-soft: #fdeff1;
+  }
+  body {
+    font-family: -apple-system, "PingFang SC", sans-serif;
+    background: #faf7f8;
+    color: #333;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+.brand {
+  text-align: center;
+  padding: 4px 0 8px;
+  border-bottom: 1px dashed #f5d6d9;
+  margin-bottom: 4px;
+}
+.brand h1 {
+  font-size: 20px;
+  color: var(--main-deep);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+.brand p {
+  font-size: 12px;
+  color: #c9a9ad;
+  letter-spacing: 0.5px;
+}
+
+  .layout { display: flex; height: 100vh; }
+
+  /* ---------- 左侧栏 ---------- */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: #fff;
+    border-right: 1px solid #f0e5e7;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+  }
+  .sidebar h1 {
+    font-size: 17px;
+    text-align: center;
+    color: var(--main-deep);
+    margin-bottom: 4px;
+  }
+  .add-btn {
+    width: 100%;
+    background: var(--main);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 11px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(246,188,192,0.5);
+  }
+  .add-btn:active { opacity: 0.85; }
+
+  .side-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 4px;
+  }
+  .side-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .side-item:hover { background: var(--main-soft); }
+  .side-item img {
+    width: 40px; height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+    background: #eee;
+  }
+  .side-item .no-img {
+    width: 40px; height: 40px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #ccc; font-size: 10px;
+  }
+  .side-item .info { overflow: hidden; flex: 1; }
+  .side-item .code-mini {
+    font-size: 13px; font-weight: 600;
+    color: var(--main-deep);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .side-item .note-mini {
+    font-size: 11px; color: #999;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .side-empty { font-size: 13px; color: #bbb; text-align: center; padding: 20px 0; }
+
+  .side-footer { display: flex; gap: 6px; }
+  .side-footer button {
+    flex: 1;
+    background: #faf7f8;
+    border: 1px solid #f0e5e7;
+    border-radius: 8px;
+    padding: 7px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #888;
+  }
+
+  /* ---------- 主区域 ---------- */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .topbar {
+    position: sticky; top: 0;
+    background: rgba(250,247,248,0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid #f0e5e7;
+    padding: 12px 20px;
+    display: flex; gap: 10px; align-items: center;
+    z-index: 10; flex-shrink: 0;
+  }
+  .search-box {
+    flex: 1;
+    border: 1px solid #f0e5e7;
+    border-radius: 10px;
+    padding: 9px 14px;
+    font-size: 14px;
+    background: #fff; outline: none;
+    transition: border 0.15s;
+  }
+  .search-box:focus { border-color: var(--main); }
+
+  .view-toggle {
+    display: flex;
+    background: #fff;
+    border: 1px solid #f0e5e7;
+    border-radius: 10px;
+    padding: 3px; gap: 2px;
+  }
+  .view-toggle button {
+    background: transparent; border: none;
+    border-radius: 7px; padding: 6px 12px;
+    font-size: 13px; cursor: pointer; color: #999;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .view-toggle button.active {
+    background: var(--main); color: #fff; font-weight: 600;
+  }
+
+  .scroll-area { flex: 1; overflow-y: auto; padding: 16px 20px 40px; }
+
+  /* ---------- 网格模式 ---------- */
+  .grid-mode {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .grid-mode .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    display: flex; flex-direction: column;
+    transition: transform 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+  }
+  .grid-mode .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(246,188,192,0.3);
+  }
+  .grid-mode .card.highlight {
+    outline: 3px solid var(--main);
+    transform: scale(1.02);
+  }
+  .grid-mode .thumb {
+    width: 100%; height: 150px;
+    background: #fafafa;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .grid-mode .thumb img {
+    max-width: 100%; max-height: 100%;
+    object-fit: contain;
+  }
+  .grid-mode .thumb.no-img { color: #ddd; font-size: 12px; }
+
+  .grid-mode .card-body {
+    flex: 1;
+    display: flex; flex-direction: column;
+    min-height: 0;
+  }
+  .grid-mode .note { min-height: 17px; }
+  .grid-mode .tags-area { min-height: 19px; }
+  .grid-mode .actions { margin-top: auto; }
+
+  /* ---------- 瀑布流模式 ---------- */
+  .masonry-mode { column-count: 4; column-gap: 14px; }
+  @media (max-width: 1400px) { .masonry-mode { column-count: 3; } }
+  @media (max-width: 1000px) { .masonry-mode { column-count: 2; } }
+  @media (max-width: 600px)  { .masonry-mode { column-count: 1; } }
+
+  .masonry-mode .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    margin-bottom: 14px;
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    display: inline-block;
+    width: 100%;
+    transition: box-shadow 0.15s;
+    cursor: pointer;
+  }
+  .masonry-mode .card:hover {
+    box-shadow: 0 6px 16px rgba(246,188,192,0.3);
+  }
+  .masonry-mode .card.highlight { outline: 3px solid var(--main); }
+  .masonry-mode .thumb {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    background: #fafafa;
+    line-height: 0;
+  }
+  .masonry-mode .thumb img { width: 100%; height: auto; display: block; }
+  .masonry-mode .thumb.no-img {
+    height: 120px;
+    display: flex; align-items: center; justify-content: center;
+    color: #ddd; font-size: 12px; line-height: 1;
+  }
+
+  /* ---------- 卡片公共元素 ---------- */
+  .card .code {
+    font-size: 15px; font-weight: 600;
+    color: var(--main-deep);
+    word-break: break-all;
+    margin-bottom: 4px;
+  }
+  .card .note {
+    font-size: 12px; color: #666;
+    margin-bottom: 6px;
+    white-space: pre-wrap;
+  }
+  .card .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .tag {
+    background: var(--main-soft);
+    color: #B13E54;
+    font-size: 11px; padding: 2px 7px;
+    border-radius: 10px;
+  }
+  .card .actions { display: flex; gap: 6px; }
+  .card .actions button {
+    flex: 1; border: none; border-radius: 8px;
+    padding: 7px; font-size: 13px; cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .card .actions button:active { opacity: 0.7; }
+  .copy { background: var(--main-soft); color: var(--main-deep); font-weight: 600; }
+  .del { background: #fdecea; color: #c62828; }
+  .edit { background: #fff4e6; color: #d68b2c; }
+
+  .empty {
+    text-align: center; color: #bbb;
+    font-size: 14px; padding: 80px 0;
+  }
+
+  /* ---------- 通用弹窗 ---------- */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.3);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.15s ease;
+  }
+  .overlay.show { display: flex; }
+  .modal {
+    background: #fff; border-radius: 16px;
+    padding: 26px 36px; text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    animation: popIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    min-width: 180px; max-width: 80vw;
+  }
+  .modal .icon { font-size: 36px; margin-bottom: 8px; }
+  .modal .title { font-size: 16px; font-weight: 600; color: #333; margin-bottom: 6px; }
+  .modal .msg { font-size: 13px; color: #888; word-break: break-all; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes popIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  /* ---------- 表单弹窗 ---------- */
+  .form-modal {
+    background: #fff; border-radius: 16px;
+    padding: 20px; width: 420px;
+    max-width: 90vw; max-height: 90vh;
+    overflow-y: auto;
+    animation: popIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .form-modal h2 {
+    font-size: 17px; margin-bottom: 14px;
+    color: var(--main-deep); text-align: center;
+  }
+  .form-modal input[type="text"], .form-modal textarea {
+    width: 100%;
+    border: 1px solid #f0e5e7;
+    border-radius: 8px;
+    padding: 9px 11px;
+    font-size: 14px; margin-bottom: 10px;
+    font-family: inherit; outline: none;
+  }
+  .form-modal input:focus, .form-modal textarea:focus { border-color: var(--main); }
+  .form-modal textarea { resize: vertical; min-height: 56px; }
+  .file-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .file-row label {
+    background: var(--main-soft);
+    color: var(--main-deep);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px; cursor: pointer;
+    white-space: nowrap; font-weight: 600;
+  }
+  .file-row input[type="file"] { display: none; }
+  .file-name { font-size: 12px; color: #999; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .preview { max-width: 100%; max-height: 140px; border-radius: 8px; margin-bottom: 10px; display: none; }
+  .form-actions { display: flex; gap: 8px; margin-top: 6px; }
+  .form-actions button {
+    flex: 1; border: none; border-radius: 10px;
+    padding: 11px; font-size: 15px; cursor: pointer;
+  }
+  .btn-primary { background: var(--main); color: #fff; font-weight: 600; }
+  .btn-cancel { background: #f5f5f5; color: #888; }
+
+  /* ---------- 详情弹窗 ---------- */
+  .detail-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 1100;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+  }
+  .detail-overlay.show { display: flex; }
+
+  .detail-modal {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+  }
+  .detail-close {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.9);
+    color: #666;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .detail-close:hover { background: #fff; }
+
+  .detail-img-wrap {
+    width: 100%;
+    max-height: 55vh;
+    background: #fafafa;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    cursor: zoom-in;
+    flex-shrink: 0;
+  }
+  .detail-img-wrap img {
+    max-width: 100%;
+    max-height: 55vh;
+    object-fit: contain;
+    display: block;
+  }
+  .detail-img-wrap.no-img {
+    min-height: 180px;
+    color: #ccc;
+    font-size: 14px;
+    cursor: default;
+  }
+
+  .detail-body {
+    padding: 18px 20px 20px;
+    overflow-y: auto;
+  }
+  .detail-code {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--main-deep);
+    word-break: break-all;
+    margin-bottom: 8px;
+  }
+  .detail-note {
+    font-size: 14px;
+    color: #555;
+    white-space: pre-wrap;
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+  .detail-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 12px;
+  }
+  .detail-tags .tag {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+  .detail-time {
+    font-size: 12px;
+    color: #bbb;
+    margin-bottom: 16px;
+  }
+  .detail-actions {
+    display: flex; gap: 10px;
+  }
+  .detail-actions button {
+    flex: 1;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.15s;
+  }
+  .detail-actions button:active { opacity: 0.75; }
+  .detail-actions .copy { background: var(--main); color: #fff; }
+  .detail-actions .edit { background: #fff4e6; color: #d68b2c; }
+  .detail-actions .del { background: #fdecea; color: #c62828; }
+
+  /* ---------- 全屏看大图 ---------- */
+  .lightbox {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.92);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 2000;
+    cursor: zoom-out;
+    padding: 30px;
+    animation: fadeIn 0.2s ease;
+  }
+  .lightbox.show { display: flex; }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    box-shadow: 0 0 60px rgba(0,0,0,0.6);
+    animation: zoomIn 0.25s cubic-bezier(0.34, 1.3, 0.64, 1);
+  }
+  @keyframes zoomIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  /* 加载/进度提示 */
+  .loading-tip {
+    position: fixed; bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    z-index: 2000;
+    display: none;
+  }
+  .loading-tip.show { display: block; }
+
+  /* ---------- 手机响应式 ---------- */
+  @media (max-width: 700px) {
+    .layout { flex-direction: column; }
+    .sidebar {
+      width: 100%; height: auto; max-height: 40vh;
+      border-right: none; border-bottom: 1px solid #f0e5e7;
+      padding: 12px;
+    }
+    .topbar { padding: 10px 12px; }
+    .scroll-area { padding: 12px 12px 30px; }
+    .grid-mode { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+    .grid-mode .thumb { height: 110px; }
+    .masonry-mode { column-count: 2; column-gap: 10px; }
+    .masonry-mode .card { margin-bottom: 10px; }
+    .view-toggle button { padding: 6px 8px; font-size: 12px; }
+    .view-toggle button span.label { display: none; }
+
+    /* 手机端详情弹窗从底部弹出 */
+    .detail-overlay { padding: 0; align-items: flex-end; }
+    .detail-modal {
+      max-width: 100%;
+      max-height: 92vh;
+      border-radius: 20px 20px 0 0;
+      animation: slideUp 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+    }
+    .detail-img-wrap { max-height: 45vh; }
+    .detail-img-wrap img { max-height: 45vh; }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>✨ Nikki</h1>
+      <p>欢迎来到暖暖的衣柜~</p>
+    </div>
+    <button class="add-btn" onclick="openForm()">＋ 添加搭配码</button>
+    <div class="side-list" id="sideList"></div>
+    <div class="side-footer">
+      <button onclick="exportData()">导出备份</button>
+      <button onclick="document.getElementById('importFile').click()">导入备份</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <input class="search-box" id="searchInput" placeholder="搜索搭配码 / 备注 / 标签..." oninput="render()">
+      <div class="view-toggle">
+        <button id="btnGrid" class="active" onclick="setView('grid')" title="网格模式">▦ <span class="label">网格</span></button>
+        <button id="btnMasonry" onclick="setView('masonry')" title="瀑布流模式">▥ <span class="label">瀑布流</span></button>
+      </div>
+    </div>
+    <div class="scroll-area">
+      <div id="content" class="grid-mode"></div>
+    </div>
+  </main>
+
+</div>
+
+<!-- 复制提示 -->
+<div class="overlay" id="toast">
+  <div class="modal">
+    <div class="icon">✅</div>
+    <div class="title">复制成功</div>
+    <div class="msg" id="toastMsg"></div>
+  </div>
+</div>
+
+<!-- 添加/编辑表单 -->
+<div class="overlay" id="formOverlay">
+  <div class="form-modal">
+    <h2 id="formTitle">添加搭配码</h2>
+    <input type="text" id="codeInput" placeholder="搭配码（必填）">
+    <textarea id="noteInput" placeholder="备注（可选）"></textarea>
+    <input type="text" id="tagInput" placeholder="标签（逗号分隔，可选）">
+    <div class="file-row">
+      <label for="imgInput">选择图片</label>
+      <input type="file" id="imgInput" accept="image/*" onchange="onImgChange(event)">
+      <span class="file-name" id="fileName">未选择</span>
+    </div>
+    <img id="preview" class="preview" alt="">
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeForm()">取消</button>
+      <button class="btn-primary" id="submitBtn" onclick="submitForm()">添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- 详情弹窗 -->
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-modal">
+    <button class="detail-close" onclick="closeDetail()">×</button>
+    <div class="detail-img-wrap" id="detailImgWrap" onclick="openLightbox()">
+      <img id="detailImg" alt="">
+    </div>
+    <div class="detail-body">
+      <div class="detail-code" id="detailCode"></div>
+      <div class="detail-note" id="detailNote"></div>
+      <div class="detail-tags" id="detailTags"></div>
+      <div class="detail-time" id="detailTime"></div>
+      <div class="detail-actions">
+        <button class="copy" onclick="detailCopy()">📋 复制</button>
+        <button class="edit" onclick="detailEdit()">✏️ 编辑</button>
+        <button class="del" onclick="detailDelete()">🗑️ 删除</button>
+	</div>
+    </div>
+  </div>
+</div>
+
+<!-- 全屏大图 -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightboxImg" alt="">
+</div>
+
+<div class="loading-tip" id="loadingTip">处理中...</div>
+
+<script>
+/* =========================================================
+   IndexedDB
+   ========================================================= */
+const DB_NAME = 'dapei_db';
+const DB_VERSION = 1;
+const STORE = 'items';
+let db = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    if (db) return resolve(db);
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      const database = e.target.result;
+      if (!database.objectStoreNames.contains(STORE)) {
+        database.createObjectStore(STORE, { keyPath: 'id' });
+      }
+    };
+    req.onsuccess = e => { db = e.target.result; resolve(db); };
+    req.onerror = e => reject(e.target.error);
+  });
+}
+
+async function getAll() {
+  const database = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = database.transaction(STORE, 'readonly');
+    const req = tx.objectStore(STORE).getAll();
+    req.onsuccess = () => {
+      const list = req.result || [];
+      list.sort((a, b) => b.id - a.id);
+      resolve(list);
+    };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function putItem(item) {
+  const database = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = database.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).put(item);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function deleteItemDB(id) {
+  const database = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = database.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function countItems() {
+  const database = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = database.transaction(STORE, 'readonly');
+    const req = tx.objectStore(STORE).count();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+/* 迁移旧数据 */
+async function migrateFromLocalStorage() {
+  const OLD_KEY = 'dapei_codes';
+  const raw = localStorage.getItem(OLD_KEY);
+  if (!raw) return;
+  try {
+    const oldData = JSON.parse(raw);
+    if (!Array.isArray(oldData) || !oldData.length) {
+      localStorage.removeItem(OLD_KEY); return;
+    }
+    const existing = await countItems();
+    if (existing > 0) {
+      if (!confirm(`检测到旧版数据 ${oldData.length} 条，新版数据库已有 ${existing} 条。\n\n是否把旧数据合并进来？`)) {
+        localStorage.removeItem(OLD_KEY); return;
+      }
+    }
+    for (const item of oldData) await putItem(item);
+    localStorage.removeItem(OLD_KEY);
+    showToast('🎉', '迁移完成', `旧数据 ${oldData.length} 条已导入`);
+  } catch (e) { console.error('迁移失败', e); }
+}
+
+/* =========================================================
+   状态
+   ========================================================= */
+let currentImage = null;
+let editingId = null;
+let currentView = localStorage.getItem('dapei_view') || 'grid';
+let cachedData = [];
+let currentDetailId = null;
+
+/* =========================================================
+   视图切换
+   ========================================================= */
+function setView(v) {
+  currentView = v;
+  localStorage.setItem('dapei_view', v);
+  document.getElementById('btnGrid').classList.toggle('active', v === 'grid');
+  document.getElementById('btnMasonry').classList.toggle('active', v === 'masonry');
+  render();
+}
+
+/* =========================================================
+   Toast / Loading
+   ========================================================= */
+let toastTimer = null;
+function showToast(icon, title, msg) {
+  document.querySelector('#toast .icon').textContent = icon;
+  document.querySelector('#toast .title').textContent = title;
+  document.getElementById('toastMsg').textContent = msg || '';
+  const el = document.getElementById('toast');
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1500);
+}
+function showLoading(text) {
+  const el = document.getElementById('loadingTip');
+  el.textContent = text || '处理中...';
+  el.classList.add('show');
+}
+function hideLoading() {
+  document.getElementById('loadingTip').classList.remove('show');
+}
+
+/* =========================================================
+   表单
+   ========================================================= */
+async function openForm(editId = null) {
+  editingId = editId;
+  const title = document.getElementById('formTitle');
+  const btn = document.getElementById('submitBtn');
+
+  if (editId) {
+    const item = cachedData.find(i => i.id === editId);
+    if (!item) return;
+    title.textContent = '编辑搭配码';
+    btn.textContent = '保存';
+    document.getElementById('codeInput').value = item.code;
+    document.getElementById('noteInput').value = item.note || '';
+    document.getElementById('tagInput').value = (item.tags || []).join(',');
+    currentImage = item.image || null;
+    if (currentImage) {
+      const p = document.getElementById('preview');
+      p.src = currentImage; p.style.display = 'block';
+    }
+  } else {
+    title.textContent = '添加搭配码';
+    btn.textContent = '添加';
+    document.getElementById('codeInput').value = '';
+    document.getElementById('noteInput').value = '';
+    document.getElementById('tagInput').value = '';
+    currentImage = null;
+    document.getElementById('preview').style.display = 'none';
+    document.getElementById('imgInput').value = '';
+    document.getElementById('fileName').textContent = '未选择';
+  }
+  document.getElementById('formOverlay').classList.add('show');
+  setTimeout(() => document.getElementById('codeInput').focus(), 50);
+}
+
+function closeForm() {
+  document.getElementById('formOverlay').classList.remove('show');
+  editingId = null;
+}
+
+async function submitForm() {
+  const code = document.getElementById('codeInput').value.trim();
+  const note = document.getElementById('noteInput').value.trim();
+  const tagsRaw = document.getElementById('tagInput').value.trim();
+  if (!code) { showToast('⚠️', '搭配码不能为空', ''); return; }
+
+  const tags = tagsRaw ? tagsRaw.split(/[,，]/).map(t => t.trim()).filter(Boolean) : [];
+
+  try {
+    if (editingId) {
+      const item = cachedData.find(i => i.id === editingId);
+      await putItem({ ...item, code, note, tags, image: currentImage });
+    } else {
+      await putItem({
+        id: Date.now(),
+        code, note, tags,
+        image: currentImage || null,
+        time: new Date().toLocaleString()
+      });
+    }
+    closeForm();
+    await refreshData();
+    if (!editingId) showToast('✨', '添加成功', code);
+  } catch (e) {
+    console.error(e);
+    showToast('❌', '保存失败', e.message || '');
+  }
+}
+
+/* =========================================================
+   图片压缩
+   ========================================================= */
+function onImgChange(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('fileName').textContent = file.name;
+  showLoading('压缩图片中...');
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    compressImage(ev.target.result, 1400, 0.8, dataUrl => {
+      currentImage = dataUrl;
+      const preview = document.getElementById('preview');
+      preview.src = dataUrl; preview.style.display = 'block';
+      hideLoading();
+    });
+  };
+  reader.onerror = () => { hideLoading(); showToast('❌', '读取图片失败', ''); };
+  reader.readAsDataURL(file);
+}
+
+function compressImage(dataUrl, maxWidth, quality, callback) {
+  const img = new Image();
+  img.onload = () => {
+    let { width, height } = img;
+    if (width > maxWidth) {
+      height = Math.round(height * maxWidth / width);
+      width = maxWidth;
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = width; canvas.height = height;
+    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+    callback(canvas.toDataURL('image/jpeg', quality));
+  };
+  img.src = dataUrl;
+}
+
+/* =========================================================
+   复制 / 删除
+   ========================================================= */
+function copyCode(code) {
+  const done = () => showToast('✅', '复制成功', code);
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(code).then(done).catch(fallback);
+  } else { fallback(); }
+  function fallback() {
+    const ta = document.createElement('textarea');
+    ta.value = code;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); }
+    catch { showToast('❌', '复制失败', '请手动长按复制'); }
+    document.body.removeChild(ta);
+  }
+}
+
+async function delItem(id, e) {
+  if (e) e.stopPropagation();
+  if (!confirm('确定删除这条搭配码？')) return;
+  try {
+    await deleteItemDB(id);
+    await refreshData();
+    if (currentDetailId === id) closeDetail();
+    showToast('🗑️', '已删除', '');
+  } catch (e) {
+    showToast('❌', '删除失败', e.message || '');
+  }
+}
+
+/* =========================================================
+   数据刷新 + 渲染
+   ========================================================= */
+async function refreshData() {
+  cachedData = await getAll();
+  render();
+}
+
+function render() {
+  const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+  let data = cachedData;
+
+  if (keyword) {
+    data = data.filter(item =>
+      item.code.toLowerCase().includes(keyword) ||
+      (item.note || '').toLowerCase().includes(keyword) ||
+      (item.tags || []).some(t => t.toLowerCase().includes(keyword))
+    );
+  }
+
+  const content = document.getElementById('content');
+  content.className = currentView === 'grid' ? 'grid-mode' : 'masonry-mode';
+
+  if (!data.length) {
+    content.className = '';
+    content.innerHTML = cachedData.length
+      ? '<div class="empty">没有匹配的结果 🔍</div>'
+      : '<div class="empty">还没有搭配码，点左上角「＋ 添加搭配码」开始吧～</div>';
+  } else {
+    content.innerHTML = data.map(item => renderCard(item)).join('');
+  }
+
+  const sideList = document.getElementById('sideList');
+  if (!cachedData.length) {
+    sideList.innerHTML = '<div class="side-empty">暂无搭配码</div>';
+  } else {
+    sideList.innerHTML = cachedData.map(item => `
+      <div class="side-item" onclick="openDetail(${item.id})">
+        ${item.image
+          ? `<img src="${item.image}" alt="" loading="lazy">`
+          : `<div class="no-img">无图</div>`}
+        <div class="info">
+          <div class="code-mini">${escapeHtml(item.code)}</div>
+          ${item.note ? `<div class="note-mini">${escapeHtml(item.note)}</div>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function renderCard(item) {
+  const isGrid = currentView === 'grid';
+  const thumb = item.image
+    ? `<div class="thumb"><img src="${item.image}" alt="" loading="lazy"></div>`
+    : `<div class="thumb no-img">无图</div>`;
+
+  // 注意：card 上挂 onclick 打开详情，按钮加 event.stopPropagation 阻止冒泡
+  const actions = `
+    <div class="actions" onclick="event.stopPropagation()">
+      <button class="copy" onclick="copyCode('${escapeAttr(item.code)}')">复制</button>
+      <button class="edit" onclick="openForm(${item.id})">编辑</button>
+      <button class="del" onclick="delItem(${item.id}, event)">删除</button>
+    </div>`;
+
+  if (isGrid) {
+    return `
+      <div class="card" data-id="${item.id}" onclick="openDetail(${item.id})">
+        ${thumb}
+        <div class="card-body">
+          <div class="code">${escapeHtml(item.code)}</div>
+          <div class="note">${item.note ? escapeHtml(item.note) : ''}</div>
+          <div class="tags-area">
+            ${(item.tags && item.tags.length)
+              ? `<div class="tags">${item.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>`
+              : ''}
+          </div>
+          ${actions}
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div class="card" data-id="${item.id}" onclick="openDetail(${item.id})">
+      ${thumb}
+      <div class="code">${escapeHtml(item.code)}</div>
+      ${item.note ? `<div class="note">${escapeHtml(item.note)}</div>` : ''}
+      ${(item.tags && item.tags.length) ? `<div class="tags">${item.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+      ${actions}
+    </div>`;
+}
+
+function locate(id) {
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  if (!card) return;
+  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  card.classList.add('highlight');
+  setTimeout(() => card.classList.remove('highlight'), 1200);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+function escapeAttr(s) {
+  return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
+
+/* =========================================================
+   详情弹窗
+   ========================================================= */
+function openDetail(id) {
+  const item = cachedData.find(i => i.id === id);
+  if (!item) return;
+  currentDetailId = id;
+
+  const wrap = document.getElementById('detailImgWrap');
+  const img = document.getElementById('detailImg');
+  if (item.image) {
+    img.src = item.image;
+    img.style.display = 'block';
+    wrap.classList.remove('no-img');
+    wrap.style.cursor = 'zoom-in';
+  } else {
+    img.removeAttribute('src');
+    img.style.display = 'none';
+    wrap.classList.add('no-img');
+    wrap.style.cursor = 'default';
+    wrap.innerHTML = '<span style="color:#ccc;font-size:14px;">无图片</span><img id="detailImg" style="display:none" alt="">';
+  }
+
+  document.getElementById('detailCode').textContent = item.code;
+  document.getElementById('detailNote').textContent = item.note || '';
+  document.getElementById('detailNote').style.display = item.note ? 'block' : 'none';
+
+  const tagsEl = document.getElementById('detailTags');
+  if (item.tags && item.tags.length) {
+    tagsEl.innerHTML = item.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+    tagsEl.style.display = 'flex';
+  } else {
+    tagsEl.innerHTML = '';
+    tagsEl.style.display = 'none';
+  }
+
+  document.getElementById('detailTime').textContent = item.time ? `添加于 ${item.time}` : '';
+
+  document.getElementById('detailOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+  currentDetailId = null;
+}
+
+function detailCopy() {
+  const item = cachedData.find(i => i.id === currentDetailId);
+  if (item) copyCode(item.code);
+}
+
+function detailEdit() {
+  const id = currentDetailId;
+  if (!id) return;
+  closeDetail();
+  openForm(id);
+}
+
+async function detailDelete() {
+  if (currentDetailId) await delItem(currentDetailId);
+}
+
+/* =========================================================
+   全屏看大图
+   ========================================================= */
+function openLightbox() {
+  const item = cachedData.find(i => i.id === currentDetailId);
+  if (!item || !item.image) return;
+  document.getElementById('lightboxImg').src = item.image;
+  document.getElementById('lightbox').classList.add('show');
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('show');
+}
+
+/* =========================================================
+   导入导出
+   ========================================================= */
+function exportData() {
+  const data = cachedData;
+  if (!data.length) { showToast('📭', '暂无数据', '没有可导出的内容'); return; }
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '搭配码备份_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  showToast('📤', '已导出', `${data.length} 条`);
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  showLoading('导入中...');
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (!Array.isArray(imported)) throw new Error('格式不对');
+      if (!confirm(`导入 ${imported.length} 条，会与现有数据合并，继续？`)) { hideLoading(); return; }
+      const existingIds = new Set(cachedData.map(i => i.id));
+      let added = 0;
+      for (const item of imported) {
+        if (!existingIds.has(item.id)) { await putItem(item); added++; }
+      }
+      await refreshData();
+      hideLoading();
+      showToast('📥', '导入成功', `新增 ${added} 条`);
+    } catch (err) {
+      hideLoading();
+      showToast('❌', '文件格式不对', '');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+/* =========================================================
+   遮罩点击关闭 & 快捷键
+   ========================================================= */
+document.getElementById('toast').addEventListener('click', e => {
+  if (e.target.id === 'toast') e.currentTarget.classList.remove('show');
+});
+document.getElementById('formOverlay').addEventListener('click', e => {
+  if (e.target.id === 'formOverlay') closeForm();
+});
+document.getElementById('detailOverlay').addEventListener('click', e => {
+  if (e.target.id === 'detailOverlay') closeDetail();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if (document.getElementById('lightbox').classList.contains('show')) { closeLightbox(); return; }
+    if (document.getElementById('detailOverlay').classList.contains('show')) { closeDetail(); return; }
+    if (document.getElementById('formOverlay').classList.contains('show')) { closeForm(); return; }
+  }
+});
+
+/* =========================================================
+   初始化
+   ========================================================= */
+(async function init() {
+  try {
+    await openDB();
+    await migrateFromLocalStorage();
+    await refreshData();
+    setView(currentView);
+  } catch (e) {
+    console.error(e);
+    document.getElementById('content').innerHTML =
+      '<div class="empty">数据库初始化失败：' + escapeHtml(e.message || '') + '</div>';
+  }
+})();
+</script>
+</body>
+</html>
