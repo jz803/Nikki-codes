@@ -977,7 +977,7 @@
 
   <main class="main">
     <div class="topbar">
-      <input class="search-box" id="searchInput" placeholder="搜索搭配码 / 备注 / 标签...（空格分词）" oninput="render()">
+      <input class="search-box" id="searchInput" placeholder="搜索搭配码 / 备注 / 标签" oninput="render()">
       <button class="filter-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="只看收藏">⭐ <span>收藏</span></button>
       <select class="sort-select" id="sortSelect" onchange="changeSort()">
         <option value="newest">最新添加</option>
@@ -1018,16 +1018,15 @@
            <h2 id="formTitle">添加搭配码</h2>
 
     <label class="tag-picker-label">搭配码（必填）</label>
-    <input type="text" id="codeInput" placeholder="输入搭配码...">
+    <input type="text" id="codeInput">
 
     <label class="tag-picker-label">备注（可选）</label>
-    <textarea id="noteInput" placeholder="输入备注..."></textarea>
+    <textarea id="noteInput"></textarea>
 
     <div class="tag-picker">
       <label class="tag-picker-label">标签（可选）</label>
       <div class="tag-selected" id="tagSelected"></div>
       <input type="text" id="tagInput" class="tag-input"
-             placeholder="输入标签关键词，或直接打字回车新建..."
              oninput="onTagInput()" onkeydown="onTagKeydown(event)">
       <div class="tag-suggest-wrap" id="tagSuggestWrap" style="display:none;">
         <div class="tag-suggest" id="tagSuggest"></div>
