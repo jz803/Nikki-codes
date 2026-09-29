@@ -1022,8 +1022,7 @@
     <div class="tag-picker">
   <label class="tag-picker-label">🏷️ 标签（可选）</label>
   <div class="tag-selected" id="tagSelected"></div>
-  <input type="text" id="tagInput" class="tag-input" placeholder="输入标签关键词，或直接打字回车新建..."
-         oninput="onTagInput()" onkeydown="onTagKeydown(event)">
+  <input type="text" id="tagInput" class="tag-input" oninput="onTagInput()" onkeydown="onTagKeydown(event)">
   <div class="tag-suggest-wrap" id="tagSuggestWrap" style="display:none;">
     <div class="tag-suggest" id="tagSuggest"></div>
     <button type="button" class="tag-expand-btn" id="tagExpandBtn" onclick="toggleTagExpand()" style="display:none;">
