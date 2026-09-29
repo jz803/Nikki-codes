@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>搭配码</title>
+<title>我的搭配码</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --main: #F6BCC0;
     --main-deep: #e79aa0;
     --main-soft: #fdeff1;
+    --tag-text: #B13E54;
   }
   body {
     font-family: -apple-system, "PingFang SC", sans-serif;
@@ -19,44 +20,38 @@
     overflow: hidden;
   }
 
-.brand {
-  text-align: center;
-  padding: 4px 0 8px;
-  border-bottom: 1px dashed #f5d6d9;
-  margin-bottom: 4px;
-}
-.brand h1 {
-  font-size: 20px;
-  color: var(--main-deep);
-  letter-spacing: 1px;
-  margin-bottom: 4px;
-  font-weight: 700;
-}
-.brand p {
-  font-size: 12px;
-  color: #c9a9ad;
-  letter-spacing: 0.5px;
-}
-
   .layout { display: flex; height: 100vh; }
 
   /* ---------- 左侧栏 ---------- */
   .sidebar {
-    width: 240px;
+    width: 260px;
     flex-shrink: 0;
     background: #fff;
     border-right: 1px solid #f0e5e7;
     display: flex;
     flex-direction: column;
     padding: 16px;
-    gap: 12px;
+    gap: 10px;
+    overflow-y: auto;
   }
-  .sidebar h1 {
-    font-size: 17px;
+  .brand {
     text-align: center;
-    color: var(--main-deep);
-    margin-bottom: 4px;
+    padding: 4px 0 10px;
+    border-bottom: 1px dashed #f5d6d9;
   }
+  .brand h1 {
+    font-size: 20px;
+    color: var(--main-deep);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+  .brand p {
+    font-size: 12px;
+    color: #c9a9ad;
+    letter-spacing: 0.5px;
+  }
+
   .add-btn {
     width: 100%;
     background: var(--main);
@@ -71,8 +66,82 @@
   }
   .add-btn:active { opacity: 0.85; }
 
+  /* 标签云 */
+  .tag-cloud-section {
+    border-top: 1px dashed #f5d6d9;
+    padding-top: 10px;
+  }
+  .tag-cloud-title {
+    font-size: 12px;
+    color: #b09094;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .tag-cloud-clear {
+    background: none;
+    border: none;
+    color: var(--main-deep);
+    font-size: 11px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  .tag-cloud-clear:hover { background: var(--main-soft); }
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .tag-cloud-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #faf7f8;
+    border: 1px solid #f0e5e7;
+    color: var(--tag-text);
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tag-cloud-item:hover {
+    background: var(--main-soft);
+    border-color: var(--main);
+  }
+  .tag-cloud-item.active {
+    background: var(--main);
+    border-color: var(--main);
+    color: #fff;
+    font-weight: 600;
+  }
+  .tag-cloud-item .count {
+    font-size: 10px;
+    opacity: 0.65;
+  }
+  .tag-cloud-empty {
+    font-size: 12px;
+    color: #ccc;
+    text-align: center;
+    padding: 6px 0;
+  }
+
+  /* 侧栏列表 */
+  .side-list-title {
+    font-size: 12px;
+    color: #b09094;
+    padding-top: 10px;
+    border-top: 1px dashed #f5d6d9;
+    margin-top: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
   .side-list {
     flex: 1;
+    min-height: 100px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -89,26 +158,37 @@
     transition: background 0.15s;
   }
   .side-item:hover { background: var(--main-soft); }
-  .side-item img {
+  .side-item .thumb-mini {
     width: 40px; height: 40px;
-    object-fit: cover;
     border-radius: 6px;
     flex-shrink: 0;
-    background: #eee;
-  }
-  .side-item .no-img {
-    width: 40px; height: 40px;
     background: #f5f5f5;
-    border-radius: 6px;
-    flex-shrink: 0;
+    overflow: hidden;
     display: flex; align-items: center; justify-content: center;
     color: #ccc; font-size: 10px;
+    position: relative;
+  }
+  .side-item .thumb-mini img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .side-item .thumb-mini .multi {
+    position: absolute;
+    right: 2px; bottom: 2px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 9px;
+    padding: 1px 4px;
+    border-radius: 6px;
   }
   .side-item .info { overflow: hidden; flex: 1; }
   .side-item .code-mini {
     font-size: 13px; font-weight: 600;
     color: var(--main-deep);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .side-item .code-mini .star {
+    font-size: 11px;
   }
   .side-item .note-mini {
     font-size: 11px; color: #999;
@@ -116,16 +196,26 @@
   }
   .side-empty { font-size: 13px; color: #bbb; text-align: center; padding: 20px 0; }
 
-  .side-footer { display: flex; gap: 6px; }
+  .side-footer {
+    display: flex; gap: 6px;
+    padding-top: 8px;
+    border-top: 1px dashed #f5d6d9;
+  }
   .side-footer button {
     flex: 1;
     background: #faf7f8;
     border: 1px solid #f0e5e7;
     border-radius: 8px;
-    padding: 7px;
+    padding: 8px;
     font-size: 12px;
     cursor: pointer;
     color: #888;
+    font-weight: 600;
+  }
+  .side-footer button:hover {
+    background: var(--main-soft);
+    border-color: var(--main);
+    color: var(--main-deep);
   }
 
   /* ---------- 主区域 ---------- */
@@ -133,16 +223,18 @@
 
   .topbar {
     position: sticky; top: 0;
-    background: rgba(250,247,248,0.92);
+    background: rgba(250,247,248,0.95);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid #f0e5e7;
     padding: 12px 20px;
     display: flex; gap: 10px; align-items: center;
     z-index: 10; flex-shrink: 0;
+    flex-wrap: wrap;
   }
   .search-box {
     flex: 1;
+    min-width: 160px;
     border: 1px solid #f0e5e7;
     border-radius: 10px;
     padding: 9px 14px;
@@ -151,6 +243,39 @@
     transition: border 0.15s;
   }
   .search-box:focus { border-color: var(--main); }
+
+  .filter-btn {
+    background: #fff;
+    border: 1px solid #f0e5e7;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #888;
+    display: flex; align-items: center; gap: 5px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .filter-btn:hover { border-color: var(--main); color: var(--main-deep); }
+  .filter-btn.active {
+    background: var(--main);
+    border-color: var(--main);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .sort-select {
+    border: 1px solid #f0e5e7;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 13px;
+    background: #fff;
+    color: #888;
+    cursor: pointer;
+    outline: none;
+    font-family: inherit;
+  }
+  .sort-select:focus { border-color: var(--main); }
 
   .view-toggle {
     display: flex;
@@ -170,6 +295,44 @@
     background: var(--main); color: #fff; font-weight: 600;
   }
 
+  /* 筛选提示条 */
+  .filter-bar {
+    background: var(--main-soft);
+    border-bottom: 1px solid #f0e5e7;
+    padding: 8px 20px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--tag-text);
+    flex-wrap: wrap;
+  }
+  .filter-bar.show { display: flex; }
+  .filter-bar .label { color: #b09094; }
+  .filter-chip {
+    background: #fff;
+    border: 1px solid var(--main);
+    color: var(--tag-text);
+    border-radius: 12px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .filter-chip button {
+    background: none; border: none;
+    color: var(--tag-text);
+    cursor: pointer; padding: 0;
+    font-size: 14px; line-height: 1;
+  }
+  .filter-clear {
+    margin-left: auto;
+    background: none; border: none;
+    color: var(--tag-text);
+    font-size: 12px; cursor: pointer;
+    text-decoration: underline;
+  }
+
   .scroll-area { flex: 1; overflow-y: auto; padding: 16px 20px 40px; }
 
   /* ---------- 网格模式 ---------- */
@@ -186,6 +349,7 @@
     display: flex; flex-direction: column;
     transition: transform 0.15s, box-shadow 0.15s;
     cursor: pointer;
+    position: relative;
   }
   .grid-mode .card:hover {
     transform: translateY(-2px);
@@ -202,6 +366,7 @@
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
     margin-bottom: 8px;
+    position: relative;
   }
   .grid-mode .thumb img {
     max-width: 100%; max-height: 100%;
@@ -237,6 +402,7 @@
     width: 100%;
     transition: box-shadow 0.15s;
     cursor: pointer;
+    position: relative;
   }
   .masonry-mode .card:hover {
     box-shadow: 0 6px 16px rgba(246,188,192,0.3);
@@ -249,6 +415,7 @@
     margin-bottom: 8px;
     background: #fafafa;
     line-height: 0;
+    position: relative;
   }
   .masonry-mode .thumb img { width: 100%; height: auto; display: block; }
   .masonry-mode .thumb.no-img {
@@ -257,12 +424,44 @@
     color: #ddd; font-size: 12px; line-height: 1;
   }
 
+  /* 星标按钮 */
+  .card .fav-btn {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 3;
+    transition: transform 0.15s;
+  }
+  .card .fav-btn:hover { transform: scale(1.15); }
+  .card .fav-btn.on { background: #fff7e0; }
+
+  /* 多图角标 */
+  .thumb .multi-badge {
+    position: absolute;
+    right: 6px; bottom: 6px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    line-height: 1.3;
+  }
+
   /* ---------- 卡片公共元素 ---------- */
   .card .code {
     font-size: 15px; font-weight: 600;
     color: var(--main-deep);
     word-break: break-all;
     margin-bottom: 4px;
+    display: flex; align-items: center; gap: 5px;
   }
   .card .note {
     font-size: 12px; color: #666;
@@ -272,20 +471,29 @@
   .card .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
   .tag {
     background: var(--main-soft);
-    color: #B13E54;
-    font-size: 11px; padding: 2px 7px;
+    color: var(--tag-text);
+    font-size: 11px; padding: 2px 8px;
     border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+  .tag:hover {
+    background: var(--main);
+    color: #fff;
+    border-color: var(--main);
   }
   .card .actions { display: flex; gap: 6px; }
   .card .actions button {
     flex: 1; border: none; border-radius: 8px;
     padding: 7px; font-size: 13px; cursor: pointer;
     transition: opacity 0.15s;
+    font-weight: 600;
   }
   .card .actions button:active { opacity: 0.7; }
-  .copy { background: var(--main-soft); color: var(--main-deep); font-weight: 600; }
-  .del { background: #fdecea; color: #c62828; }
+  .copy { background: var(--main-soft); color: var(--main-deep); }
   .edit { background: #fff4e6; color: #d68b2c; }
+  .del { background: #fdecea; color: #c62828; }
 
   .empty {
     text-align: center; color: #bbb;
@@ -322,7 +530,7 @@
   /* ---------- 表单弹窗 ---------- */
   .form-modal {
     background: #fff; border-radius: 16px;
-    padding: 20px; width: 420px;
+    padding: 20px; width: 460px;
     max-width: 90vw; max-height: 90vh;
     overflow-y: auto;
     animation: popIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -341,19 +549,57 @@
   }
   .form-modal input:focus, .form-modal textarea:focus { border-color: var(--main); }
   .form-modal textarea { resize: vertical; min-height: 56px; }
-  .file-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .file-row label {
-    background: var(--main-soft);
-    color: var(--main-deep);
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 13px; cursor: pointer;
-    white-space: nowrap; font-weight: 600;
+
+  .imgs-upload {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 10px;
   }
-  .file-row input[type="file"] { display: none; }
-  .file-name { font-size: 12px; color: #999; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .preview { max-width: 100%; max-height: 140px; border-radius: 8px; margin-bottom: 10px; display: none; }
-  .form-actions { display: flex; gap: 8px; margin-top: 6px; }
+  .img-thumb {
+    width: 70px; height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    background: #fafafa;
+    border: 1px solid #f0e5e7;
+  }
+  .img-thumb img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .img-thumb .remove {
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: #e57373;
+    color: #fff;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  }
+  .img-add {
+    width: 70px; height: 70px;
+    border-radius: 8px;
+    border: 2px dashed #f0d5d8;
+    background: #fffafb;
+    color: var(--main-deep);
+    font-size: 24px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .img-add:hover { background: var(--main-soft); border-color: var(--main); }
+  .img-add input { display: none; }
+  .imgs-hint {
+    width: 100%;
+    font-size: 11px;
+    color: #bbb;
+    margin-top: -4px;
+  }
+
+  .form-actions { display: flex; gap: 8px; margin-top: 10px; }
   .form-actions button {
     flex: 1; border: none; border-radius: 10px;
     padding: 11px; font-size: 15px; cursor: pointer;
@@ -377,7 +623,7 @@
     background: #fff;
     border-radius: 16px;
     width: 100%;
-    max-width: 640px;
+    max-width: 680px;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
@@ -399,30 +645,75 @@
     z-index: 10;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s;
   }
   .detail-close:hover { background: #fff; }
 
-  .detail-img-wrap {
+  .detail-fav {
+    position: absolute;
+    top: 12px; left: 12px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.9);
+    color: #ccc;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .detail-fav.on { background: #fff7e0; color: #f5b900; }
+
+  .detail-gallery {
     width: 100%;
-    max-height: 55vh;
     background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .detail-main-img {
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
     cursor: zoom-in;
-    flex-shrink: 0;
+    min-height: 200px;
+    max-height: 55vh;
   }
-  .detail-img-wrap img {
+  .detail-main-img img {
     max-width: 100%;
     max-height: 55vh;
     object-fit: contain;
     display: block;
   }
-  .detail-img-wrap.no-img {
+  .detail-gallery.no-img {
     min-height: 180px;
+    align-items: center;
+    justify-content: center;
     color: #ccc;
     font-size: 14px;
-    cursor: default;
+    display: flex;
+  }
+  .detail-thumbs {
+    display: flex;
+    gap: 6px;
+    padding: 8px;
+    overflow-x: auto;
+    background: #fff;
+    border-top: 1px solid #f0e5e7;
+  }
+  .detail-thumbs .dot {
+    width: 50px; height: 50px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .detail-thumbs .dot.active { border-color: var(--main); }
+  .detail-thumbs .dot img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
   }
 
   .detail-body {
@@ -457,19 +748,17 @@
     margin-bottom: 16px;
   }
   .detail-actions {
-    display: flex; gap: 10px;
+    display: flex; gap: 8px;
   }
   .detail-actions button {
     flex: 1;
     border: none;
     border-radius: 10px;
     padding: 12px;
-    font-size: 15px;
+    font-size: 14px;
     cursor: pointer;
     font-weight: 600;
-    transition: opacity 0.15s;
   }
-  .detail-actions button:active { opacity: 0.75; }
   .detail-actions .copy { background: var(--main); color: #fff; }
   .detail-actions .edit { background: #fff4e6; color: #d68b2c; }
   .detail-actions .del { background: #fdecea; color: #c62828; }
@@ -516,20 +805,24 @@
   @media (max-width: 700px) {
     .layout { flex-direction: column; }
     .sidebar {
-      width: 100%; height: auto; max-height: 40vh;
+      width: 100%; height: auto; max-height: 38vh;
       border-right: none; border-bottom: 1px solid #f0e5e7;
       padding: 12px;
     }
-    .topbar { padding: 10px 12px; }
+    .brand { padding: 2px 0 8px; }
+    .brand h1 { font-size: 17px; }
+    .topbar { padding: 10px 12px; gap: 8px; }
+    .search-box { min-width: 100%; }
+    .filter-btn, .sort-select { font-size: 12px; padding: 7px 10px; }
+    .view-toggle button { padding: 6px 8px; font-size: 12px; }
+    .view-toggle button span.label { display: none; }
     .scroll-area { padding: 12px 12px 30px; }
+    .filter-bar { padding: 8px 12px; font-size: 12px; }
     .grid-mode { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
     .grid-mode .thumb { height: 110px; }
     .masonry-mode { column-count: 2; column-gap: 10px; }
     .masonry-mode .card { margin-bottom: 10px; }
-    .view-toggle button { padding: 6px 8px; font-size: 12px; }
-    .view-toggle button span.label { display: none; }
 
-    /* 手机端详情弹窗从底部弹出 */
     .detail-overlay { padding: 0; align-items: flex-end; }
     .detail-modal {
       max-width: 100%;
@@ -537,8 +830,8 @@
       border-radius: 20px 20px 0 0;
       animation: slideUp 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
     }
-    .detail-img-wrap { max-height: 45vh; }
-    .detail-img-wrap img { max-height: 45vh; }
+    .detail-main-img { max-height: 45vh; }
+    .detail-main-img img { max-height: 45vh; }
     @keyframes slideUp {
       from { transform: translateY(100%); }
       to   { transform: translateY(0); }
@@ -555,8 +848,23 @@
       <h1>✨ Nikki</h1>
       <p>欢迎来到暖暖的衣柜~</p>
     </div>
+
     <button class="add-btn" onclick="openForm()">＋ 添加搭配码</button>
+
+    <div class="tag-cloud-section">
+      <div class="tag-cloud-title">
+        <span>🏷️ 标签</span>
+        <button class="tag-cloud-clear" id="clearTagsBtn" style="display:none" onclick="clearTagFilter()">清空</button>
+      </div>
+      <div class="tag-cloud" id="tagCloud"></div>
+    </div>
+
+    <div class="side-list-title">
+      <span>📋 全部搭配码</span>
+      <span id="totalCount" style="font-weight:600;"></span>
+    </div>
     <div class="side-list" id="sideList"></div>
+
     <div class="side-footer">
       <button onclick="exportData()">导出备份</button>
       <button onclick="document.getElementById('importFile').click()">导入备份</button>
@@ -567,11 +875,24 @@
   <main class="main">
     <div class="topbar">
       <input class="search-box" id="searchInput" placeholder="搜索搭配码 / 备注 / 标签..." oninput="render()">
+      <button class="filter-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="只看收藏">⭐ <span>收藏</span></button>
+      <select class="sort-select" id="sortSelect" onchange="changeSort()">
+        <option value="newest">最新添加</option>
+        <option value="oldest">最旧添加</option>
+        <option value="code">搭配码 A→Z</option>
+      </select>
       <div class="view-toggle">
         <button id="btnGrid" class="active" onclick="setView('grid')" title="网格模式">▦ <span class="label">网格</span></button>
         <button id="btnMasonry" onclick="setView('masonry')" title="瀑布流模式">▥ <span class="label">瀑布流</span></button>
       </div>
     </div>
+
+    <div class="filter-bar" id="filterBar">
+      <span class="label">正在筛选：</span>
+      <span id="filterChips"></span>
+      <button class="filter-clear" onclick="clearTagFilter()">清空筛选</button>
+    </div>
+
     <div class="scroll-area">
       <div id="content" class="grid-mode"></div>
     </div>
@@ -594,13 +915,13 @@
     <h2 id="formTitle">添加搭配码</h2>
     <input type="text" id="codeInput" placeholder="搭配码（必填）">
     <textarea id="noteInput" placeholder="备注（可选）"></textarea>
-    <input type="text" id="tagInput" placeholder="标签（逗号分隔，可选）">
-    <div class="file-row">
-      <label for="imgInput">选择图片</label>
-      <input type="file" id="imgInput" accept="image/*" onchange="onImgChange(event)">
-      <span class="file-name" id="fileName">未选择</span>
+    <input type="text" id="tagInput" placeholder="标签（逗号分隔，可选，如 甜美,限定）">
+
+    <div class="imgs-upload" id="imgsUpload">
+      <label class="img-add" for="imgInput">＋<input type="file" id="imgInput" accept="image/*" multiple onchange="onImgChange(event)"></label>
+      <div class="imgs-hint" id="imgsHint">可以上传多张图片，点 ＋ 添加</div>
     </div>
-    <img id="preview" class="preview" alt="">
+
     <div class="form-actions">
       <button class="btn-cancel" onclick="closeForm()">取消</button>
       <button class="btn-primary" id="submitBtn" onclick="submitForm()">添加</button>
@@ -612,8 +933,12 @@
 <div class="detail-overlay" id="detailOverlay">
   <div class="detail-modal">
     <button class="detail-close" onclick="closeDetail()">×</button>
-    <div class="detail-img-wrap" id="detailImgWrap" onclick="openLightbox()">
-      <img id="detailImg" alt="">
+    <button class="detail-fav" id="detailFav" onclick="toggleFavFromDetail()">☆</button>
+    <div class="detail-gallery" id="detailGallery">
+      <div class="detail-main-img" id="detailMainImg" onclick="openLightbox()">
+        <img id="detailImg" alt="">
+      </div>
+      <div class="detail-thumbs" id="detailThumbs" style="display:none"></div>
     </div>
     <div class="detail-body">
       <div class="detail-code" id="detailCode"></div>
@@ -624,7 +949,7 @@
         <button class="copy" onclick="detailCopy()">📋 复制</button>
         <button class="edit" onclick="detailEdit()">✏️ 编辑</button>
         <button class="del" onclick="detailDelete()">🗑️ 删除</button>
-	</div>
+      </div>
     </div>
   </div>
 </div>
@@ -641,7 +966,7 @@
    IndexedDB
    ========================================================= */
 const DB_NAME = 'dapei_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE = 'items';
 let db = null;
 
@@ -667,7 +992,13 @@ async function getAll() {
     const req = tx.objectStore(STORE).getAll();
     req.onsuccess = () => {
       const list = req.result || [];
-      list.sort((a, b) => b.id - a.id);
+      // 兼容旧数据：把 image 字段转成 images 数组
+      list.forEach(item => {
+        if (!Array.isArray(item.images)) {
+          item.images = item.image ? [item.image] : [];
+        }
+        if (typeof item.fav !== 'boolean') item.fav = false;
+      });
       resolve(list);
     };
     req.onerror = () => reject(req.error);
@@ -704,7 +1035,9 @@ async function countItems() {
   });
 }
 
-/* 迁移旧数据 */
+/* =========================================================
+   迁移旧数据（localStorage → IndexedDB）
+   ========================================================= */
 async function migrateFromLocalStorage() {
   const OLD_KEY = 'dapei_codes';
   const raw = localStorage.getItem(OLD_KEY);
@@ -720,7 +1053,11 @@ async function migrateFromLocalStorage() {
         localStorage.removeItem(OLD_KEY); return;
       }
     }
-    for (const item of oldData) await putItem(item);
+    for (const item of oldData) {
+      if (!Array.isArray(item.images)) item.images = item.image ? [item.image] : [];
+      if (typeof item.fav !== 'boolean') item.fav = false;
+      await putItem(item);
+    }
     localStorage.removeItem(OLD_KEY);
     showToast('🎉', '迁移完成', `旧数据 ${oldData.length} 条已导入`);
   } catch (e) { console.error('迁移失败', e); }
@@ -729,14 +1066,18 @@ async function migrateFromLocalStorage() {
 /* =========================================================
    状态
    ========================================================= */
-let currentImage = null;
+let currentImages = [];       // 表单里待上传的多张图
 let editingId = null;
 let currentView = localStorage.getItem('dapei_view') || 'grid';
+let currentSort = localStorage.getItem('dapei_sort') || 'newest';
+let showFavOnly = false;
+let activeTags = new Set();   // 多标签筛选
 let cachedData = [];
 let currentDetailId = null;
+let currentDetailImgIndex = 0;
 
 /* =========================================================
-   视图切换
+   视图 / 排序
    ========================================================= */
 function setView(v) {
   currentView = v;
@@ -744,6 +1085,51 @@ function setView(v) {
   document.getElementById('btnGrid').classList.toggle('active', v === 'grid');
   document.getElementById('btnMasonry').classList.toggle('active', v === 'masonry');
   render();
+}
+
+function changeSort() {
+  currentSort = document.getElementById('sortSelect').value;
+  localStorage.setItem('dapei_sort', currentSort);
+  render();
+}
+
+function toggleFavFilter() {
+  showFavOnly = !showFavOnly;
+  document.getElementById('favFilterBtn').classList.toggle('active', showFavOnly);
+  render();
+}
+
+/* =========================================================
+   标签筛选
+   ========================================================= */
+function toggleTagFilter(tag) {
+  if (activeTags.has(tag)) activeTags.delete(tag);
+  else activeTags.add(tag);
+  updateFilterBar();
+  render();
+}
+
+function clearTagFilter() {
+  activeTags.clear();
+  updateFilterBar();
+  render();
+}
+
+function updateFilterBar() {
+  const bar = document.getElementById('filterBar');
+  const chips = document.getElementById('filterChips');
+  const clearBtn = document.getElementById('clearTagsBtn');
+  if (activeTags.size === 0) {
+    bar.classList.remove('show');
+    clearBtn.style.display = 'none';
+    chips.innerHTML = '';
+  } else {
+    bar.classList.add('show');
+    clearBtn.style.display = 'inline-block';
+    chips.innerHTML = Array.from(activeTags).map(t =>
+      `<span class="filter-chip">${escapeHtml(t)}<button onclick="toggleTagFilter('${escapeAttr(t)}')">×</button></span>`
+    ).join('');
+  }
 }
 
 /* =========================================================
@@ -784,22 +1170,16 @@ async function openForm(editId = null) {
     document.getElementById('codeInput').value = item.code;
     document.getElementById('noteInput').value = item.note || '';
     document.getElementById('tagInput').value = (item.tags || []).join(',');
-    currentImage = item.image || null;
-    if (currentImage) {
-      const p = document.getElementById('preview');
-      p.src = currentImage; p.style.display = 'block';
-    }
+    currentImages = Array.isArray(item.images) ? [...item.images] : [];
   } else {
     title.textContent = '添加搭配码';
     btn.textContent = '添加';
     document.getElementById('codeInput').value = '';
     document.getElementById('noteInput').value = '';
     document.getElementById('tagInput').value = '';
-    currentImage = null;
-    document.getElementById('preview').style.display = 'none';
-    document.getElementById('imgInput').value = '';
-    document.getElementById('fileName').textContent = '未选择';
+    currentImages = [];
   }
+  renderImgsUpload();
   document.getElementById('formOverlay').classList.add('show');
   setTimeout(() => document.getElementById('codeInput').focus(), 50);
 }
@@ -807,6 +1187,32 @@ async function openForm(editId = null) {
 function closeForm() {
   document.getElementById('formOverlay').classList.remove('show');
   editingId = null;
+  currentImages = [];
+}
+
+function renderImgsUpload() {
+  const wrap = document.getElementById('imgsUpload');
+  const addBtn = wrap.querySelector('.img-add');
+  const hint = document.getElementById('imgsHint');
+
+  // 移除旧缩略图
+  wrap.querySelectorAll('.img-thumb').forEach(el => el.remove());
+
+  currentImages.forEach((src, idx) => {
+    const div = document.createElement('div');
+    div.className = 'img-thumb';
+    div.innerHTML = `<img src="${src}" alt=""><button class="remove" type="button" onclick="removeImg(${idx})">×</button>`;
+    wrap.insertBefore(div, addBtn);
+  });
+
+  hint.textContent = currentImages.length
+    ? `已选 ${currentImages.length} 张，点 ＋ 继续添加`
+    : '可以上传多张图片，点 ＋ 添加';
+}
+
+function removeImg(idx) {
+  currentImages.splice(idx, 1);
+  renderImgsUpload();
 }
 
 async function submitForm() {
@@ -820,18 +1226,20 @@ async function submitForm() {
   try {
     if (editingId) {
       const item = cachedData.find(i => i.id === editingId);
-      await putItem({ ...item, code, note, tags, image: currentImage });
+      await putItem({ ...item, code, note, tags, images: [...currentImages] });
     } else {
       await putItem({
         id: Date.now(),
         code, note, tags,
-        image: currentImage || null,
+        images: [...currentImages],
+        fav: false,
         time: new Date().toLocaleString()
       });
     }
+    const wasEditing = editingId;
     closeForm();
     await refreshData();
-    if (!editingId) showToast('✨', '添加成功', code);
+    if (!wasEditing) showToast('✨', '添加成功', code);
   } catch (e) {
     console.error(e);
     showToast('❌', '保存失败', e.message || '');
@@ -839,25 +1247,39 @@ async function submitForm() {
 }
 
 /* =========================================================
-   图片压缩
+   图片压缩（多张）
    ========================================================= */
 function onImgChange(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  document.getElementById('fileName').textContent = file.name;
-  showLoading('压缩图片中...');
+  const files = Array.from(e.target.files || []);
+  if (!files.length) return;
+  showLoading(`压缩图片中 (0/${files.length})...`);
 
-  const reader = new FileReader();
-  reader.onload = ev => {
-    compressImage(ev.target.result, 1400, 0.8, dataUrl => {
-      currentImage = dataUrl;
-      const preview = document.getElementById('preview');
-      preview.src = dataUrl; preview.style.display = 'block';
-      hideLoading();
-    });
-  };
-  reader.onerror = () => { hideLoading(); showToast('❌', '读取图片失败', ''); };
-  reader.readAsDataURL(file);
+  let done = 0;
+  const results = new Array(files.length);
+
+  files.forEach((file, i) => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      compressImage(ev.target.result, 1400, 0.8, dataUrl => {
+        results[i] = dataUrl;
+        done++;
+        if (done < files.length) {
+          showLoading(`压缩图片中 (${done}/${files.length})...`);
+        } else {
+          currentImages = currentImages.concat(results.filter(Boolean));
+          renderImgsUpload();
+          hideLoading();
+        }
+      });
+    };
+    reader.onerror = () => {
+      done++;
+      if (done === files.length) { hideLoading(); showToast('❌', '部分图片读取失败', ''); }
+    };
+    reader.readAsDataURL(file);
+  });
+
+  e.target.value = '';
 }
 
 function compressImage(dataUrl, maxWidth, quality, callback) {
@@ -877,7 +1299,7 @@ function compressImage(dataUrl, maxWidth, quality, callback) {
 }
 
 /* =========================================================
-   复制 / 删除
+   复制 / 收藏 / 删除
    ========================================================= */
 function copyCode(code) {
   const done = () => showToast('✅', '复制成功', code);
@@ -894,6 +1316,16 @@ function copyCode(code) {
     catch { showToast('❌', '复制失败', '请手动长按复制'); }
     document.body.removeChild(ta);
   }
+}
+
+async function toggleFav(id, e) {
+  if (e) e.stopPropagation();
+  const item = cachedData.find(i => i.id === id);
+  if (!item) return;
+  item.fav = !item.fav;
+  await putItem(item);
+  await refreshData();
+  showToast(item.fav ? '⭐' : '☆', item.fav ? '已收藏' : '已取消收藏', '');
 }
 
 async function delItem(id, e) {
@@ -914,13 +1346,42 @@ async function delItem(id, e) {
    ========================================================= */
 async function refreshData() {
   cachedData = await getAll();
+  renderTagCloud();
   render();
 }
 
-function render() {
-  const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-  let data = cachedData;
+function renderTagCloud() {
+  const cloud = document.getElementById('tagCloud');
+  const clearBtn = document.getElementById('clearTagsBtn');
+  const counts = {};
+  cachedData.forEach(item => {
+    (item.tags || []).forEach(t => {
+      counts[t] = (counts[t] || 0) + 1;
+    });
+  });
+  const tags = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
 
+  if (!tags.length) {
+    cloud.innerHTML = '<div class="tag-cloud-empty">还没有标签</div>';
+    return;
+  }
+
+  cloud.innerHTML = tags.map(t => `
+    <span class="tag-cloud-item ${activeTags.has(t) ? 'active' : ''}"
+          onclick="toggleTagFilter('${escapeAttr(t)}')">
+      ${escapeHtml(t)}
+      <span class="count">${counts[t]}</span>
+    </span>
+  `).join('');
+
+  clearBtn.style.display = activeTags.size ? 'inline-block' : 'none';
+}
+
+function getFilteredSorted() {
+  const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+  let data = [...cachedData];
+
+  // 搜索
   if (keyword) {
     data = data.filter(item =>
       item.code.toLowerCase().includes(keyword) ||
@@ -929,29 +1390,92 @@ function render() {
     );
   }
 
+  // 收藏筛选
+  if (showFavOnly) {
+    data = data.filter(item => item.fav);
+  }
+
+  // 标签筛选：任一包含
+  if (activeTags.size > 0) {
+    data = data.filter(item =>
+      (item.tags || []).some(t => activeTags.has(t))
+    );
+    // 同时包含的优先排前面
+    const matchedCount = item => (item.tags || []).filter(t => activeTags.has(t)).length;
+    data.sort((a, b) => matchedCount(b) - matchedCount(a));
+    // 但收藏优先 + 排序规则会覆盖，所以这个"优先"只作为次级排序
+  }
+
+  // 排序
+  // 先按收藏优先（收藏的在前），再按选定排序
+  const sortFn = {
+    newest: (a, b) => b.id - a.id,
+    oldest: (a, b) => a.id - b.id,
+    code: (a, b) => a.code.localeCompare(b.code)
+  }[currentSort] || ((a, b) => b.id - a.id);
+
+  if (activeTags.size > 0) {
+    // 多标签：同时包含多的优先 + 收藏优先
+    const matchedCount = item => (item.tags || []).filter(t => activeTags.has(t)).length;
+    data.sort((a, b) => {
+      if (a.fav !== b.fav) return b.fav - a.fav;
+      const diff = matchedCount(b) - matchedCount(a);
+      if (diff !== 0) return diff;
+      return sortFn(a, b);
+    });
+  } else {
+    // 无标签筛选：收藏优先 + 选定排序
+    data.sort((a, b) => {
+      if (a.fav !== b.fav) return b.fav - a.fav;
+      return sortFn(a, b);
+    });
+  }
+
+  return data;
+}
+
+function render() {
+  const data = getFilteredSorted();
+
+  document.getElementById('totalCount').textContent = cachedData.length;
+
   const content = document.getElementById('content');
   content.className = currentView === 'grid' ? 'grid-mode' : 'masonry-mode';
 
   if (!data.length) {
     content.className = '';
-    content.innerHTML = cachedData.length
-      ? '<div class="empty">没有匹配的结果 🔍</div>'
-      : '<div class="empty">还没有搭配码，点左上角「＋ 添加搭配码」开始吧～</div>';
+    if (activeTags.size > 0 || showFavOnly || document.getElementById('searchInput').value.trim()) {
+      content.innerHTML = '<div class="empty">没有匹配的结果 🔍</div>';
+    } else {
+      content.innerHTML = '<div class="empty">还没有搭配码，点左上角「＋ 添加搭配码」开始吧～</div>';
+    }
   } else {
     content.innerHTML = data.map(item => renderCard(item)).join('');
   }
 
+  // 侧栏列表（不受筛选影响，显示全部）
   const sideList = document.getElementById('sideList');
   if (!cachedData.length) {
     sideList.innerHTML = '<div class="side-empty">暂无搭配码</div>';
   } else {
-    sideList.innerHTML = cachedData.map(item => `
+    const sortedAll = [...cachedData].sort((a, b) => {
+      if (a.fav !== b.fav) return b.fav - a.fav;
+      return b.id - a.id;
+    });
+    sideList.innerHTML = sortedAll.map(item => `
       <div class="side-item" onclick="openDetail(${item.id})">
-        ${item.image
-          ? `<img src="${item.image}" alt="" loading="lazy">`
-          : `<div class="no-img">无图</div>`}
+        <div class="thumb-mini">
+          ${item.images && item.images.length
+            ? `<img src="${item.images[0]}" alt="" loading="lazy">`
+            : '无图'}
+          ${item.images && item.images.length > 1
+            ? `<span class="multi">${item.images.length}</span>` : ''}
+        </div>
         <div class="info">
-          <div class="code-mini">${escapeHtml(item.code)}</div>
+          <div class="code-mini">
+            ${item.fav ? '<span class="star">⭐</span>' : ''}
+            ${escapeHtml(item.code)}
+          </div>
           ${item.note ? `<div class="note-mini">${escapeHtml(item.note)}</div>` : ''}
         </div>
       </div>
@@ -961,11 +1485,23 @@ function render() {
 
 function renderCard(item) {
   const isGrid = currentView === 'grid';
-  const thumb = item.image
-    ? `<div class="thumb"><img src="${item.image}" alt="" loading="lazy"></div>`
+  const hasImgs = item.images && item.images.length > 0;
+  const firstImg = hasImgs ? item.images[0] : null;
+  const multiCount = item.images ? item.images.length : 0;
+
+  const thumb = hasImgs
+    ? `<div class="thumb">
+         <img src="${firstImg}" alt="" loading="lazy">
+         ${multiCount > 1 ? `<span class="multi-badge">${multiCount} 张</span>` : ''}
+       </div>`
     : `<div class="thumb no-img">无图</div>`;
 
-  // 注意：card 上挂 onclick 打开详情，按钮加 event.stopPropagation 阻止冒泡
+  const favBtn = `<button class="fav-btn ${item.fav ? 'on' : ''}"
+                    onclick="toggleFav(${item.id}, event)"
+                    title="${item.fav ? '取消收藏' : '收藏'}">
+                    ${item.fav ? '⭐' : '☆'}
+                  </button>`;
+
   const actions = `
     <div class="actions" onclick="event.stopPropagation()">
       <button class="copy" onclick="copyCode('${escapeAttr(item.code)}')">复制</button>
@@ -973,18 +1509,21 @@ function renderCard(item) {
       <button class="del" onclick="delItem(${item.id}, event)">删除</button>
     </div>`;
 
+  const tagsHtml = (item.tags && item.tags.length)
+    ? `<div class="tags">${item.tags.map(t =>
+        `<span class="tag" onclick="event.stopPropagation(); toggleTagFilter('${escapeAttr(t)}')">${escapeHtml(t)}</span>`
+      ).join('')}</div>`
+    : '';
+
   if (isGrid) {
     return `
       <div class="card" data-id="${item.id}" onclick="openDetail(${item.id})">
+        ${favBtn}
         ${thumb}
         <div class="card-body">
           <div class="code">${escapeHtml(item.code)}</div>
           <div class="note">${item.note ? escapeHtml(item.note) : ''}</div>
-          <div class="tags-area">
-            ${(item.tags && item.tags.length)
-              ? `<div class="tags">${item.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>`
-              : ''}
-          </div>
+          <div class="tags-area">${tagsHtml}</div>
           ${actions}
         </div>
       </div>`;
@@ -992,20 +1531,13 @@ function renderCard(item) {
 
   return `
     <div class="card" data-id="${item.id}" onclick="openDetail(${item.id})">
+      ${favBtn}
       ${thumb}
       <div class="code">${escapeHtml(item.code)}</div>
       ${item.note ? `<div class="note">${escapeHtml(item.note)}</div>` : ''}
-      ${(item.tags && item.tags.length) ? `<div class="tags">${item.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+      ${tagsHtml}
       ${actions}
     </div>`;
-}
-
-function locate(id) {
-  const card = document.querySelector(`.card[data-id="${id}"]`);
-  if (!card) return;
-  card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  card.classList.add('highlight');
-  setTimeout(() => card.classList.remove('highlight'), 1200);
 }
 
 function escapeHtml(s) {
@@ -1024,29 +1556,44 @@ function openDetail(id) {
   const item = cachedData.find(i => i.id === id);
   if (!item) return;
   currentDetailId = id;
+  currentDetailImgIndex = 0;
 
-  const wrap = document.getElementById('detailImgWrap');
-  const img = document.getElementById('detailImg');
-  if (item.image) {
-    img.src = item.image;
-    img.style.display = 'block';
-    wrap.classList.remove('no-img');
-    wrap.style.cursor = 'zoom-in';
+  // 收藏按钮
+  const favBtn = document.getElementById('detailFav');
+  favBtn.classList.toggle('on', !!item.fav);
+  favBtn.textContent = item.fav ? '★' : '☆';
+
+  // 图片区
+  const gallery = document.getElementById('detailGallery');
+  const mainImg = document.getElementById('detailImg');
+  const thumbs = document.getElementById('detailThumbs');
+  const imgs = item.images || [];
+
+  if (imgs.length === 0) {
+    gallery.classList.add('no-img');
+    gallery.innerHTML = '<span>无图片</span>';
   } else {
-    img.removeAttribute('src');
-    img.style.display = 'none';
-    wrap.classList.add('no-img');
-    wrap.style.cursor = 'default';
-    wrap.innerHTML = '<span style="color:#ccc;font-size:14px;">无图片</span><img id="detailImg" style="display:none" alt="">';
+    gallery.classList.remove('no-img');
+    gallery.innerHTML = `
+      <div class="detail-main-img" id="detailMainImg" onclick="openLightbox()">
+        <img id="detailImg" src="${imgs[0]}" alt="">
+      </div>
+      ${imgs.length > 1 ? `<div class="detail-thumbs" id="detailThumbs">${imgs.map((src, i) =>
+        `<div class="dot ${i===0?'active':''}" onclick="switchDetailImg(${i})"><img src="${src}" alt=""></div>`
+      ).join('')}</div>` : ''}
+    `;
   }
 
   document.getElementById('detailCode').textContent = item.code;
-  document.getElementById('detailNote').textContent = item.note || '';
-  document.getElementById('detailNote').style.display = item.note ? 'block' : 'none';
+  const noteEl = document.getElementById('detailNote');
+  noteEl.textContent = item.note || '';
+  noteEl.style.display = item.note ? 'block' : 'none';
 
   const tagsEl = document.getElementById('detailTags');
   if (item.tags && item.tags.length) {
-    tagsEl.innerHTML = item.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+    tagsEl.innerHTML = item.tags.map(t =>
+      `<span class="tag" onclick="closeDetail(); toggleTagFilter('${escapeAttr(t)}')">${escapeHtml(t)}</span>`
+    ).join('');
     tagsEl.style.display = 'flex';
   } else {
     tagsEl.innerHTML = '';
@@ -1059,10 +1606,22 @@ function openDetail(id) {
   document.body.style.overflow = 'hidden';
 }
 
+function switchDetailImg(idx) {
+  const item = cachedData.find(i => i.id === currentDetailId);
+  if (!item || !item.images) return;
+  currentDetailImgIndex = idx;
+  const mainImg = document.getElementById('detailImg');
+  if (mainImg) mainImg.src = item.images[idx];
+  document.querySelectorAll('#detailThumbs .dot').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+}
+
 function closeDetail() {
   document.getElementById('detailOverlay').classList.remove('show');
   document.body.style.overflow = '';
   currentDetailId = null;
+  currentDetailImgIndex = 0;
 }
 
 function detailCopy() {
@@ -1081,16 +1640,30 @@ async function detailDelete() {
   if (currentDetailId) await delItem(currentDetailId);
 }
 
+async function toggleFavFromDetail() {
+  if (!currentDetailId) return;
+  const item = cachedData.find(i => i.id === currentDetailId);
+  if (!item) return;
+  item.fav = !item.fav;
+  await putItem(item);
+
+  const favBtn = document.getElementById('detailFav');
+  favBtn.classList.toggle('on', item.fav);
+  favBtn.textContent = item.fav ? '★' : '☆';
+
+  await refreshData();
+  showToast(item.fav ? '⭐' : '☆', item.fav ? '已收藏' : '已取消收藏', '');
+}
+
 /* =========================================================
    全屏看大图
    ========================================================= */
 function openLightbox() {
   const item = cachedData.find(i => i.id === currentDetailId);
-  if (!item || !item.image) return;
-  document.getElementById('lightboxImg').src = item.image;
+  if (!item || !item.images || !item.images.length) return;
+  document.getElementById('lightboxImg').src = item.images[currentDetailImgIndex] || item.images[0];
   document.getElementById('lightbox').classList.add('show');
 }
-
 function closeLightbox() {
   document.getElementById('lightbox').classList.remove('show');
 }
@@ -1106,7 +1679,7 @@ function exportData() {
   a.href = URL.createObjectURL(blob);
   a.download = '搭配码备份_' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
-  showToast('📤', '已导出', `${data.length} 条`);
+  showToast('📤', '导出成功', `${data.length} 条`);
 }
 
 function importData(e) {
@@ -1122,7 +1695,13 @@ function importData(e) {
       const existingIds = new Set(cachedData.map(i => i.id));
       let added = 0;
       for (const item of imported) {
-        if (!existingIds.has(item.id)) { await putItem(item); added++; }
+        if (!existingIds.has(item.id)) {
+          if (!Array.isArray(item.images)) item.images = item.image ? [item.image] : [];
+          if (typeof item.fav !== 'boolean') item.fav = false;
+          delete item.image;
+          await putItem(item);
+          added++;
+        }
       }
       await refreshData();
       hideLoading();
@@ -1162,6 +1741,7 @@ document.addEventListener('keydown', e => {
    ========================================================= */
 (async function init() {
   try {
+    document.getElementById('sortSelect').value = currentSort;
     await openDB();
     await migrateFromLocalStorage();
     await refreshData();
