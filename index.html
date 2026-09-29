@@ -1382,27 +1382,35 @@ function getFilteredSorted() {
   let data = [...cachedData];
 
   // 搜索
+  let searchScores = null;
   if (keyword) {
     const words = keyword.split(/\s+/).filter(Boolean);
+
     const scoreOf = item => {
       const code = item.code.toLowerCase();
       const note = (item.note || '').toLowerCase();
       const tags = (item.tags || []).map(t => t.toLowerCase());
-
       let score = 0;
       for (const w of words) {
-        if (code.includes(w) || note.includes(w) || tags.some(t => t.includes(w))) {
-          score++;
+        // 标签整词命中权重更高
+        let hit = false;
+        for (const t of tags) {
+          if (t === w) { score += 2; hit = true; break; }   // 标签完全相等
+          if (t.includes(w)) { score += 1; hit = true; break; } // 标签包含
         }
+        if (hit) continue;
+        if (code.includes(w)) { score += 1; continue; }
+        if (note.includes(w)) { score += 1; continue; }
       }
       return score;
     };
 
-    data = data
-      .map(item => ({ item, score: scoreOf(item) }))
-      .filter(x => x.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .map(x => x.item);
+    searchScores = new Map();
+    data = data.filter(item => {
+      const s = scoreOf(item);
+      if (s > 0) { searchScores.set(item.id, s); return true; }
+      return false;
+    });
   }
 
   // 收藏筛选
@@ -1411,44 +1419,42 @@ function getFilteredSorted() {
   }
 
   // 标签筛选：任一包含
+  let tagMatchCount = null;
   if (activeTags.size > 0) {
-    data = data.filter(item =>
-      (item.tags || []).some(t => activeTags.has(t))
-    );
-    // 同时包含的优先排前面
-    const matchedCount = item => (item.tags || []).filter(t => activeTags.has(t)).length;
-    data.sort((a, b) => matchedCount(b) - matchedCount(a));
-    // 但收藏优先 + 排序规则会覆盖，所以这个"优先"只作为次级排序
+    tagMatchCount = new Map();
+    data = data.filter(item => {
+      const n = (item.tags || []).filter(t => activeTags.has(t)).length;
+      if (n > 0) { tagMatchCount.set(item.id, n); return true; }
+      return false;
+    });
   }
 
-  // 排序
-  // 先按收藏优先（收藏的在前），再按选定排序
   const sortFn = {
     newest: (a, b) => b.id - a.id,
     oldest: (a, b) => a.id - b.id,
     code: (a, b) => a.code.localeCompare(b.code)
   }[currentSort] || ((a, b) => b.id - a.id);
 
-  if (activeTags.size > 0) {
-    // 多标签：同时包含多的优先 + 收藏优先
-    const matchedCount = item => (item.tags || []).filter(t => activeTags.has(t)).length;
-    data.sort((a, b) => {
-      if (a.fav !== b.fav) return b.fav - a.fav;
-      const diff = matchedCount(b) - matchedCount(a);
-      if (diff !== 0) return diff;
-      return sortFn(a, b);
-    });
-  } else {
-    // 无标签筛选：收藏优先 + 选定排序
-    data.sort((a, b) => {
-      if (a.fav !== b.fav) return b.fav - a.fav;
-      return sortFn(a, b);
-    });
-  }
+  data.sort((a, b) => {
+    if (a.fav !== b.fav) return b.fav - a.fav;
+
+    if (searchScores) {
+      const sa = searchScores.get(a.id) || 0;
+      const sb = searchScores.get(b.id) || 0;
+      if (sa !== sb) return sb - sa;
+    }
+
+    if (tagMatchCount) {
+      const ta = tagMatchCount.get(a.id) || 0;
+      const tb = tagMatchCount.get(b.id) || 0;
+      if (ta !== tb) return tb - ta;
+    }
+
+    return sortFn(a, b);
+  });
 
   return data;
 }
-
 function render() {
   const data = getFilteredSorted();
 
