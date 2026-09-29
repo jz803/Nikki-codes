@@ -500,110 +500,6 @@
     font-size: 14px; padding: 80px 0;
   }
 
- /* 标签选择器 */
-.tag-picker {
-  margin-bottom: 12px;
-}
-.tag-picker-label {
-  display: block;
-  font-size: 12px;
-  color: #b09094;
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-.tag-selected {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-bottom: 6px;
-}
-.tag-selected:empty { display: none; }
-.tag-selected .selected-tag {
-  background: var(--main-soft);
-  color: var(--tag-text);
-  font-size: 12px;
-  padding: 3px 8px 3px 10px;
-  border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  border: 1px solid #f0d5d8;
-}
-.tag-selected .selected-tag button {
-  background: none;
-  border: none;
-  color: var(--tag-text);
-  font-size: 14px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-  opacity: 0.6;
-}
-.tag-selected .selected-tag button:hover { opacity: 1; }
-
-.tag-input {
-  width: 100%;
-  border: 1px solid #f0e5e7;
-  border-radius: 8px;
-  padding: 9px 11px;
-  font-size: 14px;
-  font-family: inherit;
-  outline: none;
-  transition: border 0.15s;
-}
-.tag-input:focus { border-color: var(--main); }
-
-.tag-suggest-wrap {
-  margin-top: 6px;
-}
-.tag-suggest {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px;
-  background: #faf7f8;
-  border-radius: 8px;
-  border: 1px solid #f0e5e7;
-}
-.tag-suggest .suggest-item {
-  background: #fff;
-  border: 1px solid #f0e5e7;
-  color: var(--tag-text);
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.15s;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.tag-suggest .suggest-item:hover {
-  background: var(--main);
-  color: #fff;
-  border-color: var(--main);
-}
-.tag-suggest .suggest-item .count {
-  font-size: 10px;
-  opacity: 0.6;
-}
-.tag-suggest-empty {
-  font-size: 12px;
-  color: #bbb;
-  padding: 4px 2px;
-}
-.tag-expand-btn {
-  background: none;
-  border: none;
-  color: var(--main-deep);
-  font-size: 12px;
-  cursor: pointer;
-  margin-top: 6px;
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-.tag-expand-btn:hover { background: var(--main-soft); }
-
   /* ---------- 通用弹窗 ---------- */
   .overlay {
     position: fixed; inset: 0;
@@ -634,8 +530,8 @@
   /* ---------- 表单弹窗 ---------- */
   .form-modal {
     background: #fff; border-radius: 16px;
-    padding: 20px; width: 460px;
-    max-width: 90vw; max-height: 90vh;
+    padding: 20px; width: 480px;
+    max-width: 92vw; max-height: 90vh;
     overflow-y: auto;
     animation: popIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
@@ -654,6 +550,108 @@
   .form-modal input:focus, .form-modal textarea:focus { border-color: var(--main); }
   .form-modal textarea { resize: vertical; min-height: 56px; }
 
+  /* ---------- 智能标签选择器 ---------- */
+  .tag-picker {
+    margin-bottom: 12px;
+  }
+  .tag-picker-label {
+    display: block;
+    font-size: 12px;
+    color: #b09094;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .tag-selected {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+  .tag-selected:empty { display: none; }
+  .tag-selected .selected-tag {
+    background: var(--main-soft);
+    color: var(--tag-text);
+    font-size: 12px;
+    padding: 3px 8px 3px 10px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid #f0d5d8;
+  }
+  .tag-selected .selected-tag button {
+    background: none;
+    border: none;
+    color: var(--tag-text);
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.6;
+  }
+  .tag-selected .selected-tag button:hover { opacity: 1; }
+
+  .tag-input {
+    width: 100%;
+    border: 1px solid #f0e5e7;
+    border-radius: 8px;
+    padding: 9px 11px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border 0.15s;
+    margin-bottom: 0 !important;
+  }
+  .tag-input:focus { border-color: var(--main); }
+
+  .tag-suggest-wrap {
+    margin-top: 10px;
+  }
+  .tag-suggest {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag-suggest .suggest-item {
+    background: #faf7f8;
+    border: 1px solid transparent;
+    color: var(--tag-text);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tag-suggest .suggest-item:hover {
+    background: var(--main);
+    color: #fff;
+    border-color: var(--main);
+  }
+  .tag-suggest .suggest-item .count {
+    font-size: 10px;
+    opacity: 0.6;
+  }
+  .tag-suggest-empty {
+    font-size: 12px;
+    color: #bbb;
+    padding: 4px 2px;
+  }
+  .tag-expand-btn {
+    background: none;
+    border: none;
+    color: var(--main-deep);
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 6px;
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  .tag-expand-btn:hover { background: var(--main-soft); }
+
+  /* 图片上传区 */
   .imgs-upload {
     display: flex; flex-wrap: wrap; gap: 8px;
     margin-bottom: 10px;
@@ -978,7 +976,7 @@
 
   <main class="main">
     <div class="topbar">
-      <input class="search-box" id="searchInput" placeholder="搜索搭配码 / 备注 / 标签..." oninput="render()">
+      <input class="search-box" id="searchInput" placeholder="搜索搭配码 / 备注 / 标签...（空格分词）" oninput="render()">
       <button class="filter-btn" id="favFilterBtn" onclick="toggleFavFilter()" title="只看收藏">⭐ <span>收藏</span></button>
       <select class="sort-select" id="sortSelect" onchange="changeSort()">
         <option value="newest">最新添加</option>
@@ -1019,17 +1017,21 @@
     <h2 id="formTitle">添加搭配码</h2>
     <input type="text" id="codeInput" placeholder="搭配码（必填）">
     <textarea id="noteInput" placeholder="备注（可选）"></textarea>
+
     <div class="tag-picker">
-  <label class="tag-picker-label">🏷️ 标签（可选）</label>
-  <div class="tag-selected" id="tagSelected"></div>
-  <input type="text" id="tagInput" class="tag-input" oninput="onTagInput()" onkeydown="onTagKeydown(event)">
-  <div class="tag-suggest-wrap" id="tagSuggestWrap" style="display:none;">
-    <div class="tag-suggest" id="tagSuggest"></div>
-    <button type="button" class="tag-expand-btn" id="tagExpandBtn" onclick="toggleTagExpand()" style="display:none;">
-      展开全部
-    </button>
-  </div>
-</div>
+      <label class="tag-picker-label">🏷️ 标签（可选）</label>
+      <div class="tag-selected" id="tagSelected"></div>
+      <input type="text" id="tagInput" class="tag-input"
+             placeholder="输入标签关键词，或直接打字回车新建..."
+             oninput="onTagInput()" onkeydown="onTagKeydown(event)">
+      <div class="tag-suggest-wrap" id="tagSuggestWrap" style="display:none;">
+        <div class="tag-suggest" id="tagSuggest"></div>
+        <button type="button" class="tag-expand-btn" id="tagExpandBtn" onclick="toggleTagExpand()" style="display:none;">
+          展开全部
+        </button>
+      </div>
+    </div>
+
     <div class="imgs-upload" id="imgsUpload">
       <label class="img-add" for="imgInput">＋<input type="file" id="imgInput" accept="image/*" multiple onchange="onImgChange(event)"></label>
       <div class="imgs-hint" id="imgsHint">可以上传多张图片，点 ＋ 添加</div>
@@ -1105,7 +1107,6 @@ async function getAll() {
     const req = tx.objectStore(STORE).getAll();
     req.onsuccess = () => {
       const list = req.result || [];
-      // 兼容旧数据：把 image 字段转成 images 数组
       list.forEach(item => {
         if (!Array.isArray(item.images)) {
           item.images = item.image ? [item.image] : [];
@@ -1148,9 +1149,7 @@ async function countItems() {
   });
 }
 
-/* =========================================================
-   迁移旧数据（localStorage → IndexedDB）
-   ========================================================= */
+/* 迁移旧数据 */
 async function migrateFromLocalStorage() {
   const OLD_KEY = 'dapei_codes';
   const raw = localStorage.getItem(OLD_KEY);
@@ -1179,18 +1178,22 @@ async function migrateFromLocalStorage() {
 /* =========================================================
    状态
    ========================================================= */
-let currentImages = [];       // 表单里待上传的多张图
+let currentImages = [];
 let editingId = null;
 let currentView = localStorage.getItem('dapei_view') || 'grid';
 let currentSort = localStorage.getItem('dapei_sort') || 'newest';
 let showFavOnly = false;
-let activeTags = new Set();   // 多标签筛选
+let activeTags = new Set();
 let cachedData = [];
 let currentDetailId = null;
 let currentDetailImgIndex = 0;
 
+/* 标签选择器状态 */
+let pickerTags = [];
+let tagExpanded = false;
+
 /* =========================================================
-   视图 / 排序
+   视图 / 排序 / 收藏筛选
    ========================================================= */
 function setView(v) {
   currentView = v;
@@ -1268,106 +1271,8 @@ function hideLoading() {
 }
 
 /* =========================================================
-   表单
+   智能标签选择器
    ========================================================= */
-async function openForm(editId = null) {
-  editingId = editId;
-  const title = document.getElementById('formTitle');
-  const btn = document.getElementById('submitBtn');
-
-  if (editId) {
-    const item = cachedData.find(i => i.id === editId);
-    if (!item) return;
-    title.textContent = '编辑搭配码';
-    btn.textContent = '保存';
-    document.getElementById('codeInput').value = item.code;
-    document.getElementById('noteInput').value = item.note || '';
-    initTagPicker(item.tags || []);
-    currentImages = Array.isArray(item.images) ? [...item.images] : [];
-  } else {
-    title.textContent = '添加搭配码';
-    btn.textContent = '添加';
-    document.getElementById('codeInput').value = '';
-    document.getElementById('noteInput').value = '';
-    initTagPicker([]);
-    currentImages = [];
-  }
-  renderImgsUpload();
-  document.getElementById('formOverlay').classList.add('show');
-  setTimeout(() => document.getElementById('codeInput').focus(), 50);
-}
-
-function closeForm() {
-  document.getElementById('formOverlay').classList.remove('show');
-  editingId = null;
-  currentImages = [];
-}
-
-function renderImgsUpload() {
-  const wrap = document.getElementById('imgsUpload');
-  const addBtn = wrap.querySelector('.img-add');
-  const hint = document.getElementById('imgsHint');
-
-  // 移除旧缩略图
-  wrap.querySelectorAll('.img-thumb').forEach(el => el.remove());
-
-  currentImages.forEach((src, idx) => {
-    const div = document.createElement('div');
-    div.className = 'img-thumb';
-    div.innerHTML = `<img src="${src}" alt=""><button class="remove" type="button" onclick="removeImg(${idx})">×</button>`;
-    wrap.insertBefore(div, addBtn);
-  });
-
-  hint.textContent = currentImages.length
-    ? `已选 ${currentImages.length} 张，点 ＋ 继续添加`
-    : '可以上传多张图片，点 ＋ 添加';
-}
-
-function removeImg(idx) {
-  currentImages.splice(idx, 1);
-  renderImgsUpload();
-}
-
-async function submitForm() {
-  const code = document.getElementById('codeInput').value.trim();
-  const note = document.getElementById('noteInput').value.trim();
- 
-  if (!code) { showToast('⚠️', '搭配码不能为空', ''); return; }
- 
-  const pendingTag = document.getElementById('tagInput').value.trim();
-  if (pendingTag && !pickerTags.includes(pendingTag)) {
-    pickerTags.push(pendingTag);
-  }
- 
-  const tags = [...pickerTags];
-  try {
-    if (editingId) {
-      const item = cachedData.find(i => i.id === editingId);
-      await putItem({ ...item, code, note, tags, images: [...currentImages] });
-    } else {
-      await putItem({
-        id: Date.now(),
-        code, note, tags,
-        images: [...currentImages],
-        fav: false,
-        time: new Date().toLocaleString()
-      });
-    }
-    const wasEditing = editingId;
-    closeForm();
-    await refreshData();
-    if (!wasEditing) showToast('✨', '添加成功', code);
-  } catch (e) {
-    console.error(e);
-    showToast('❌', '保存失败', e.message || '');
-  }
-}
-
- /* ============ 智能标签选择器 ============ */
-let pickerTags = [];        // 当前已选的标签
-let tagExpanded = false;    // 是否展开全部候选
-
-// 打开表单时初始化
 function initTagPicker(tags) {
   pickerTags = [...tags];
   tagExpanded = false;
@@ -1417,7 +1322,6 @@ function onTagKeydown(e) {
     const val = e.target.value.trim();
     if (val) addPickerTag(val);
   } else if (e.key === 'Backspace' && !e.target.value && pickerTags.length) {
-    // 输入框空了按删除 → 删掉最后一个标签
     pickerTags.pop();
     renderSelectedTags();
     renderTagSuggest();
@@ -1449,7 +1353,6 @@ function renderTagSuggest() {
   if (input) {
     filtered = allTags.filter(t => t.toLowerCase().includes(input));
   }
-  // 按使用次数排序
   filtered.sort((a, b) => counts[b] - counts[a]);
 
   const showAll = input || tagExpanded;
@@ -1486,6 +1389,103 @@ function renderTagSuggest() {
     expandBtn.textContent = tagExpanded ? '收起' : `展开全部 (${filtered.length})`;
   } else {
     expandBtn.style.display = 'none';
+  }
+}
+
+/* =========================================================
+   表单
+   ========================================================= */
+async function openForm(editId = null) {
+  editingId = editId;
+  const title = document.getElementById('formTitle');
+  const btn = document.getElementById('submitBtn');
+
+  if (editId) {
+    const item = cachedData.find(i => i.id === editId);
+    if (!item) return;
+    title.textContent = '编辑搭配码';
+    btn.textContent = '保存';
+    document.getElementById('codeInput').value = item.code;
+    document.getElementById('noteInput').value = item.note || '';
+    currentImages = Array.isArray(item.images) ? [...item.images] : [];
+    initTagPicker(item.tags || []);
+  } else {
+    title.textContent = '添加搭配码';
+    btn.textContent = '添加';
+    document.getElementById('codeInput').value = '';
+    document.getElementById('noteInput').value = '';
+    currentImages = [];
+    initTagPicker([]);
+  }
+  renderImgsUpload();
+  document.getElementById('formOverlay').classList.add('show');
+  setTimeout(() => document.getElementById('codeInput').focus(), 50);
+}
+
+function closeForm() {
+  document.getElementById('formOverlay').classList.remove('show');
+  editingId = null;
+  currentImages = [];
+  pickerTags = [];
+}
+
+function renderImgsUpload() {
+  const wrap = document.getElementById('imgsUpload');
+  const addBtn = wrap.querySelector('.img-add');
+  const hint = document.getElementById('imgsHint');
+
+  wrap.querySelectorAll('.img-thumb').forEach(el => el.remove());
+
+  currentImages.forEach((src, idx) => {
+    const div = document.createElement('div');
+    div.className = 'img-thumb';
+    div.innerHTML = `<img src="${src}" alt=""><button class="remove" type="button" onclick="removeImg(${idx})">×</button>`;
+    wrap.insertBefore(div, addBtn);
+  });
+
+  hint.textContent = currentImages.length
+    ? `已选 ${currentImages.length} 张，点 ＋ 继续添加`
+    : '可以上传多张图片，点 ＋ 添加';
+}
+
+function removeImg(idx) {
+  currentImages.splice(idx, 1);
+  renderImgsUpload();
+}
+
+async function submitForm() {
+  const code = document.getElementById('codeInput').value.trim();
+  const note = document.getElementById('noteInput').value.trim();
+
+  if (!code) { showToast('⚠️', '搭配码不能为空', ''); return; }
+
+  // 如果有输入框里还没回车的文字，也自动加上
+  const pendingTag = document.getElementById('tagInput').value.trim();
+  if (pendingTag && !pickerTags.includes(pendingTag)) {
+    pickerTags.push(pendingTag);
+  }
+  const tags = [...pickerTags];
+
+  try {
+    if (editingId) {
+      const item = cachedData.find(i => i.id === editingId);
+      await putItem({ ...item, code, note, tags, images: [...currentImages] });
+    } else {
+      await putItem({
+        id: Date.now(),
+        code, note, tags,
+        images: [...currentImages],
+        fav: false,
+        time: new Date().toLocaleString()
+      });
+    }
+    const wasEditing = editingId;
+    closeForm();
+    await refreshData();
+    if (!wasEditing) showToast('✨', '添加成功', code);
+  } catch (e) {
+    console.error(e);
+    showToast('❌', '保存失败', e.message || '');
   }
 }
 
@@ -1620,11 +1620,14 @@ function renderTagCloud() {
   clearBtn.style.display = activeTags.size ? 'inline-block' : 'none';
 }
 
+/* =========================================================
+   筛选 + 排序（搜索分词 + 命中优先）
+   ========================================================= */
 function getFilteredSorted() {
   const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
   let data = [...cachedData];
 
-  // 搜索
+  // 搜索（支持空格分词，命中越多分越高）
   let searchScores = null;
   if (keyword) {
     const words = keyword.split(/\s+/).filter(Boolean);
@@ -1635,11 +1638,10 @@ function getFilteredSorted() {
       const tags = (item.tags || []).map(t => t.toLowerCase());
       let score = 0;
       for (const w of words) {
-        // 标签整词命中权重更高
         let hit = false;
         for (const t of tags) {
-          if (t === w) { score += 2; hit = true; break; }   // 标签完全相等
-          if (t.includes(w)) { score += 1; hit = true; break; } // 标签包含
+          if (t === w) { score += 2; hit = true; break; }
+          if (t.includes(w)) { score += 1; hit = true; break; }
         }
         if (hit) continue;
         if (code.includes(w)) { score += 1; continue; }
@@ -1672,12 +1674,14 @@ function getFilteredSorted() {
     });
   }
 
+  // 基础排序
   const sortFn = {
     newest: (a, b) => b.id - a.id,
     oldest: (a, b) => a.id - b.id,
     code: (a, b) => a.code.localeCompare(b.code)
   }[currentSort] || ((a, b) => b.id - a.id);
 
+  // 综合排序：收藏 → 搜索分 → 标签匹配数 → 用户排序
   data.sort((a, b) => {
     if (a.fav !== b.fav) return b.fav - a.fav;
 
@@ -1698,6 +1702,7 @@ function getFilteredSorted() {
 
   return data;
 }
+
 function render() {
   const data = getFilteredSorted();
 
@@ -1708,16 +1713,15 @@ function render() {
 
   if (!data.length) {
     content.className = '';
-    if (activeTags.size > 0 || showFavOnly || document.getElementById('searchInput').value.trim()) {
-      content.innerHTML = '<div class="empty">没有匹配的结果 🔍</div>';
-    } else {
-      content.innerHTML = '<div class="empty">还没有搭配码，点左上角「＋ 添加搭配码」开始吧～</div>';
-    }
+    const hasFilter = activeTags.size > 0 || showFavOnly || document.getElementById('searchInput').value.trim();
+    content.innerHTML = hasFilter
+      ? '<div class="empty">没有匹配的结果 🔍</div>'
+      : '<div class="empty">还没有搭配码，点左上角「＋ 添加搭配码」开始吧～</div>';
   } else {
     content.innerHTML = data.map(item => renderCard(item)).join('');
   }
 
-  // 侧栏列表（不受筛选影响，显示全部）
+  // 侧栏列表
   const sideList = document.getElementById('sideList');
   if (!cachedData.length) {
     sideList.innerHTML = '<div class="side-empty">暂无搭配码</div>';
@@ -1822,15 +1826,11 @@ function openDetail(id) {
   currentDetailId = id;
   currentDetailImgIndex = 0;
 
-  // 收藏按钮
   const favBtn = document.getElementById('detailFav');
   favBtn.classList.toggle('on', !!item.fav);
   favBtn.textContent = item.fav ? '★' : '☆';
 
-  // 图片区
   const gallery = document.getElementById('detailGallery');
-  const mainImg = document.getElementById('detailImg');
-  const thumbs = document.getElementById('detailThumbs');
   const imgs = item.images || [];
 
   if (imgs.length === 0) {
