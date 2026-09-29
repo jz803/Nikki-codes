@@ -500,6 +500,110 @@
     font-size: 14px; padding: 80px 0;
   }
 
+ /* 标签选择器 */
+.tag-picker {
+  margin-bottom: 12px;
+}
+.tag-picker-label {
+  display: block;
+  font-size: 12px;
+  color: #b09094;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.tag-selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+.tag-selected:empty { display: none; }
+.tag-selected .selected-tag {
+  background: var(--main-soft);
+  color: var(--tag-text);
+  font-size: 12px;
+  padding: 3px 8px 3px 10px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #f0d5d8;
+}
+.tag-selected .selected-tag button {
+  background: none;
+  border: none;
+  color: var(--tag-text);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.6;
+}
+.tag-selected .selected-tag button:hover { opacity: 1; }
+
+.tag-input {
+  width: 100%;
+  border: 1px solid #f0e5e7;
+  border-radius: 8px;
+  padding: 9px 11px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border 0.15s;
+}
+.tag-input:focus { border-color: var(--main); }
+
+.tag-suggest-wrap {
+  margin-top: 6px;
+}
+.tag-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+  background: #faf7f8;
+  border-radius: 8px;
+  border: 1px solid #f0e5e7;
+}
+.tag-suggest .suggest-item {
+  background: #fff;
+  border: 1px solid #f0e5e7;
+  color: var(--tag-text);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.tag-suggest .suggest-item:hover {
+  background: var(--main);
+  color: #fff;
+  border-color: var(--main);
+}
+.tag-suggest .suggest-item .count {
+  font-size: 10px;
+  opacity: 0.6;
+}
+.tag-suggest-empty {
+  font-size: 12px;
+  color: #bbb;
+  padding: 4px 2px;
+}
+.tag-expand-btn {
+  background: none;
+  border: none;
+  color: var(--main-deep);
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 6px;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.tag-expand-btn:hover { background: var(--main-soft); }
+
   /* ---------- 通用弹窗 ---------- */
   .overlay {
     position: fixed; inset: 0;
@@ -915,8 +1019,18 @@
     <h2 id="formTitle">添加搭配码</h2>
     <input type="text" id="codeInput" placeholder="搭配码（必填）">
     <textarea id="noteInput" placeholder="备注（可选）"></textarea>
-    <input type="text" id="tagInput" placeholder="标签（逗号分隔，可选，如 甜美,限定）">
-
+    <div class="tag-picker">
+  <label class="tag-picker-label">🏷️ 标签（可选）</label>
+  <div class="tag-selected" id="tagSelected"></div>
+  <input type="text" id="tagInput" class="tag-input" placeholder="输入标签关键词，或直接打字回车新建..."
+         oninput="onTagInput()" onkeydown="onTagKeydown(event)">
+  <div class="tag-suggest-wrap" id="tagSuggestWrap" style="display:none;">
+    <div class="tag-suggest" id="tagSuggest"></div>
+    <button type="button" class="tag-expand-btn" id="tagExpandBtn" onclick="toggleTagExpand()" style="display:none;">
+      展开全部
+    </button>
+  </div>
+</div>
     <div class="imgs-upload" id="imgsUpload">
       <label class="img-add" for="imgInput">＋<input type="file" id="imgInput" accept="image/*" multiple onchange="onImgChange(event)"></label>
       <div class="imgs-hint" id="imgsHint">可以上传多张图片，点 ＋ 添加</div>
@@ -1169,14 +1283,14 @@ async function openForm(editId = null) {
     btn.textContent = '保存';
     document.getElementById('codeInput').value = item.code;
     document.getElementById('noteInput').value = item.note || '';
-    document.getElementById('tagInput').value = (item.tags || []).join(',');
+    initTagPicker(item.tags || []);
     currentImages = Array.isArray(item.images) ? [...item.images] : [];
   } else {
     title.textContent = '添加搭配码';
     btn.textContent = '添加';
     document.getElementById('codeInput').value = '';
     document.getElementById('noteInput').value = '';
-    document.getElementById('tagInput').value = '';
+    initTagPicker([]);
     currentImages = [];
   }
   renderImgsUpload();
@@ -1218,11 +1332,15 @@ function removeImg(idx) {
 async function submitForm() {
   const code = document.getElementById('codeInput').value.trim();
   const note = document.getElementById('noteInput').value.trim();
-  const tagsRaw = document.getElementById('tagInput').value.trim();
+ 
   if (!code) { showToast('⚠️', '搭配码不能为空', ''); return; }
-
-  const tags = tagsRaw ? tagsRaw.split(/[,，]/).map(t => t.trim()).filter(Boolean) : [];
-
+ 
+  const pendingTag = document.getElementById('tagInput').value.trim();
+  if (pendingTag && !pickerTags.includes(pendingTag)) {
+    pickerTags.push(pendingTag);
+  }
+ 
+  const tags = [...pickerTags];
   try {
     if (editingId) {
       const item = cachedData.find(i => i.id === editingId);
@@ -1243,6 +1361,132 @@ async function submitForm() {
   } catch (e) {
     console.error(e);
     showToast('❌', '保存失败', e.message || '');
+  }
+}
+
+ /* ============ 智能标签选择器 ============ */
+let pickerTags = [];        // 当前已选的标签
+let tagExpanded = false;    // 是否展开全部候选
+
+// 打开表单时初始化
+function initTagPicker(tags) {
+  pickerTags = [...tags];
+  tagExpanded = false;
+  const input = document.getElementById('tagInput');
+  if (input) input.value = '';
+  renderSelectedTags();
+  renderTagSuggest();
+}
+
+function renderSelectedTags() {
+  const wrap = document.getElementById('tagSelected');
+  wrap.innerHTML = pickerTags.map((t, i) => `
+    <span class="selected-tag">
+      ${escapeHtml(t)}
+      <button type="button" onclick="removePickerTag(${i})">×</button>
+    </span>
+  `).join('');
+}
+
+function removePickerTag(idx) {
+  pickerTags.splice(idx, 1);
+  renderSelectedTags();
+  renderTagSuggest();
+}
+
+function addPickerTag(tag) {
+  const t = tag.trim();
+  if (!t) return;
+  if (pickerTags.includes(t)) {
+    showToast('⚠️', '标签已存在', t);
+    return;
+  }
+  pickerTags.push(t);
+  document.getElementById('tagInput').value = '';
+  renderSelectedTags();
+  renderTagSuggest();
+}
+
+function onTagInput() {
+  tagExpanded = false;
+  renderTagSuggest();
+}
+
+function onTagKeydown(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const val = e.target.value.trim();
+    if (val) addPickerTag(val);
+  } else if (e.key === 'Backspace' && !e.target.value && pickerTags.length) {
+    // 输入框空了按删除 → 删掉最后一个标签
+    pickerTags.pop();
+    renderSelectedTags();
+    renderTagSuggest();
+  }
+}
+
+function toggleTagExpand() {
+  tagExpanded = !tagExpanded;
+  renderTagSuggest();
+}
+
+function renderTagSuggest() {
+  const wrap = document.getElementById('tagSuggestWrap');
+  const suggest = document.getElementById('tagSuggest');
+  const expandBtn = document.getElementById('tagExpandBtn');
+  const input = document.getElementById('tagInput').value.trim().toLowerCase();
+
+  const allTags = [];
+  const counts = {};
+  cachedData.forEach(item => {
+    (item.tags || []).forEach(t => {
+      if (pickerTags.includes(t)) return;
+      counts[t] = (counts[t] || 0) + 1;
+      if (!allTags.includes(t)) allTags.push(t);
+    });
+  });
+
+  let filtered = allTags;
+  if (input) {
+    filtered = allTags.filter(t => t.toLowerCase().includes(input));
+  }
+  // 按使用次数排序
+  filtered.sort((a, b) => counts[b] - counts[a]);
+
+  const showAll = input || tagExpanded;
+  const toShow = showAll ? filtered : filtered.slice(0, 6);
+
+  if (allTags.length === 0) {
+    wrap.style.display = 'none';
+    return;
+  }
+
+  if (toShow.length === 0 && input) {
+    suggest.innerHTML = `<div class="tag-suggest-empty">没有匹配的标签，回车可直接新建「${escapeHtml(input)}」</div>`;
+    wrap.style.display = 'block';
+    expandBtn.style.display = 'none';
+    return;
+  }
+
+  if (toShow.length === 0) {
+    wrap.style.display = 'none';
+    return;
+  }
+
+  suggest.innerHTML = toShow.map(t => `
+    <span class="suggest-item" onclick="addPickerTag('${escapeAttr(t)}')">
+      ${escapeHtml(t)}
+      <span class="count">${counts[t]}</span>
+    </span>
+  `).join('');
+
+  wrap.style.display = 'block';
+
+  if (!input && filtered.length > 6) {
+    expandBtn.style.display = 'inline-block';
+    expandBtn.textContent = tagExpanded ? '收起' : `展开全部 (${filtered.length})`;
+  } else {
+    expandBtn.style.display = 'none';
   }
 }
 
