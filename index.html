@@ -702,6 +702,54 @@
     margin-top: -4px;
   }
 
+ /* 图片拖动排序 */
+.img-thumb {
+  cursor: grab;
+  transition: transform 0.15s, opacity 0.15s, box-shadow 0.15s;
+  touch-action: none;    /* 关键：手机长按不触发页面滚动 */
+  user-select: none;
+}
+.img-thumb.dragging {
+  opacity: 0.4;
+  transform: scale(0.95);
+  cursor: grabbing;
+}
+.img-thumb.drag-over {
+  box-shadow: 0 0 0 3px var(--main);
+  transform: scale(1.05);
+}
+.img-thumb .order-num {
+  position: absolute;
+  top: -4px; left: -4px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--main);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+.img-thumb .drag-hint {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  font-size: 9px;
+  text-align: center;
+  padding: 2px 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+}
+.img-thumb:hover .drag-hint { opacity: 1; }
+.imgs-upload .imgs-tip {
+  width: 100%;
+  font-size: 11px;
+  color: #bbb;
+  margin-top: -4px;
+}
+
   .form-actions { display: flex; gap: 8px; margin-top: 10px; }
   .form-actions button {
     flex: 1; border: none; border-radius: 10px;
@@ -1463,13 +1511,147 @@ function renderImgsUpload() {
   currentImages.forEach((src, idx) => {
     const div = document.createElement('div');
     div.className = 'img-thumb';
-    div.innerHTML = `<img src="${src}" alt=""><button class="remove" type="button" onclick="removeImg(${idx})">×</button>`;
+    div.dataset.index = idx;
+    div.draggable = currentImages.length > 1;
+    div.innerHTML = `
+      <img src="${src}" alt="" draggable="false">
+      <span class="order-num">${idx + 1}</span>
+      <button class="remove" type="button" onclick="removeImg(${idx})">×</button>
+      ${currentImages.length > 1 ? '<span class="drag-hint">长按拖动</span>' : ''}
+    `;
     wrap.insertBefore(div, addBtn);
   });
 
   hint.textContent = currentImages.length
-    ? `已选 ${currentImages.length} 张，点 ＋ 继续添加`
+    ? (currentImages.length > 1
+        ? `已选 ${currentImages.length} 张，长按图片可拖动排序，点 ＋ 继续添加`
+        : `已选 1 张，点 ＋ 继续添加`)
     : '可以上传多张图片，点 ＋ 添加';
+  bindImgDragSort();
+}
+
+ /* =========================================================
+   图片拖动排序
+   ========================================================= */
+let dragIndex = -1;
+let dragEl = null;
+let dragStartY = 0;
+let dragStartX = 0;
+let touchDragging = false;
+let touchLongPressTimer = null;
+
+function bindImgDragSort() {
+  const wrap = document.getElementById('imgsUpload');
+  if (!wrap) return;
+
+  const thumbs = wrap.querySelectorAll('.img-thumb');
+
+  thumbs.forEach((el, idx) => {
+    // ===== 桌面：HTML5 drag =====
+    el.addEventListener('dragstart', e => {
+      dragIndex = idx;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    el.addEventListener('dragend', () => {
+      el.classList.remove('dragging');
+      wrap.querySelectorAll('.img-thumb').forEach(t => t.classList.remove('drag-over'));
+    });
+    el.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (dragIndex !== idx) el.classList.add('drag-over');
+    });
+    el.addEventListener('dragleave', () => {
+      el.classList.remove('drag-over');
+    });
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      el.classList.remove('drag-over');
+      if (dragIndex === -1 || dragIndex === idx) return;
+      reorderImages(dragIndex, idx);
+      dragIndex = -1;
+    });
+
+    // ===== 手机：触摸拖动 =====
+    el.addEventListener('touchstart', e => {
+      // 点在删除按钮上不触发
+      if (e.target.closest('button')) return;
+      dragStartX = e.touches[0].clientX;
+      dragStartY = e.touches[0].clientY;
+      touchDragging = false;
+
+      touchLongPressTimer = setTimeout(() => {
+        touchDragging = true;
+        dragIndex = idx;
+        dragEl = el;
+        el.classList.add('dragging');
+        if (navigator.vibrate) navigator.vibrate(20);
+      }, 200);
+    }, { passive: true });
+
+    el.addEventListener('touchmove', e => {
+      const dx = Math.abs(e.touches[0].clientX - dragStartX);
+      const dy = Math.abs(e.touches[0].clientY - dragStartY);
+
+      // 长按还没触发就移动 → 取消
+      if (!touchDragging && (dx > 8 || dy > 8)) {
+        clearTimeout(touchLongPressTimer);
+        return;
+      }
+
+      if (!touchDragging) return;
+      e.preventDefault();  // 阻止页面滚动
+
+      // 找到手指下方的目标图
+      const touch = e.touches[0];
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      const targetThumb = target && target.closest('.img-thumb');
+
+      wrap.querySelectorAll('.img-thumb').forEach(t => t.classList.remove('drag-over'));
+
+      if (targetThumb && targetThumb !== dragEl) {
+        targetThumb.classList.add('drag-over');
+      }
+    }, { passive: false });
+
+    el.addEventListener('touchend', e => {
+      clearTimeout(touchLongPressTimer);
+
+      if (!touchDragging) return;
+
+      const touch = e.changedTouches[0];
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      const targetThumb = target && target.closest('.img-thumb');
+
+      if (targetThumb && targetThumb !== dragEl) {
+        const targetIdx = Number(targetThumb.dataset.index);
+        reorderImages(dragIndex, targetIdx);
+      }
+
+      if (dragEl) dragEl.classList.remove('dragging');
+      wrap.querySelectorAll('.img-thumb').forEach(t => t.classList.remove('drag-over'));
+      touchDragging = false;
+      dragEl = null;
+      dragIndex = -1;
+    });
+
+    el.addEventListener('touchcancel', () => {
+      clearTimeout(touchLongPressTimer);
+      if (dragEl) dragEl.classList.remove('dragging');
+      wrap.querySelectorAll('.img-thumb').forEach(t => t.classList.remove('drag-over'));
+      touchDragging = false;
+      dragEl = null;
+      dragIndex = -1;
+    });
+  });
+}
+
+// 把 from 位置的图移动到 to 位置
+function reorderImages(from, to) {
+  if (from === to || from < 0 || to < 0) return;
+  const [moved] = currentImages.splice(from, 1);
+  currentImages.splice(to, 0, moved);
+  renderImgsUpload();
 }
 
 function removeImg(idx) {
