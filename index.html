@@ -1074,6 +1074,25 @@
   </div>
 </div>
 
+ <!-- 自定义确认弹窗 -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal" style="padding: 24px 28px; max-width: 320px;">
+    <div class="icon" style="font-size:30px;">🗑️</div>
+    <div class="title" id="confirmTitle" style="margin-bottom:6px;"></div>
+    <div class="msg" id="confirmSub" style="margin-bottom:18px;"></div>
+    <div style="display:flex; gap:10px;">
+      <button id="confirmCancel" onclick="confirmResolve(false)"
+              style="flex:1; border:none; border-radius:10px; padding:11px; font-size:14px; cursor:pointer; background:#f5f5f5; color:#888;">
+        取消
+      </button>
+      <button id="confirmOk" onclick="confirmResolve(true)"
+              style="flex:1; border:none; border-radius:10px; padding:11px; font-size:14px; cursor:pointer; background:var(--main); color:#fff; font-weight:600;">
+        确定
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- 全屏大图 -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <img id="lightboxImg" alt="">
@@ -1578,7 +1597,8 @@ async function toggleFav(id, e) {
 
 async function delItem(id, e) {
   if (e) e.stopPropagation();
-  if (!confirm('确定删除这条搭配码？')) return;
+  const ok = await confirmModal('确定删除这条搭配码？', '删除后无法恢复');
+  if (!ok) return;
   try {
     await deleteItemDB(id);
     await refreshData();
@@ -1922,6 +1942,27 @@ async function toggleFavFromDetail() {
 
   await refreshData();
   showToast(item.fav ? '⭐' : '☆', item.fav ? '已收藏' : '已取消收藏', '');
+}
+
+ /* ============ 确认弹窗 ============ */
+let confirmResolver = null;
+function confirmModal(title, sub, okText = '确定', cancelText = '取消') {
+  return new Promise(resolve => {
+    confirmResolver = resolve;
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmSub').textContent = sub || '';
+    document.getElementById('confirmSub').style.display = sub ? 'block' : 'none';
+    document.getElementById('confirmOk').textContent = okText;
+    document.getElementById('confirmCancel').textContent = cancelText;
+    document.getElementById('confirmOverlay').classList.add('show');
+  });
+}
+function confirmResolve(ok) {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  if (confirmResolver) {
+    confirmResolver(ok);
+    confirmResolver = null;
+  }
 }
 
 /* =========================================================
